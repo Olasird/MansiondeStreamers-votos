@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor LMDLS - Tiempo Real</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #bb86fc;
+            font-size: 1.5rem;
+        }
+
+        .status {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            background-color: #252525;
+        }
+
+        .rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 30px;
+            color: #03dac6;
+        }
+
+        .name {
+            flex-grow: 1;
+            font-weight: 500;
+            padding-left: 10px;
+        }
+
+        .votes {
+            font-weight: bold;
+            color: #cf6679;
+            background: #2c2c2c;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #bb86fc;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🏆 Resultados La Mansión De Los Streamers</h1>
+        <div id="status" class="status">Cargando datos...</div>
+        <div id="loader" class="loader"></div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // URL de la API de RankedVote
+        const TARGET_URL = 'https://app.rankedvote.co/api/settings/rv/lamansion';
+        // Usamos un proxy para evitar bloqueo CORS (Gratis y público)
+        const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(TARGET_URL);
+
+        async function fetchData() {
+            const statusDiv = document.getElementById('status');
+            const loader = document.getElementById('loader');
+            const resultsDiv = document.getElementById('results');
+
+            try {
+                // Hacemos la petición
+                const response = await fetch(PROXY_URL);
+
+                // corsproxy.io devuelve la respuesta directamente, no necesita doble parseo
+                const jsonReal = await response.json();
+
+                // Extraemos la data visual (está en results.visual_data)
+                const visualDataArray = jsonReal.payload.settings.results.visual_data;
+
+                // Tomamos el PRIMER objeto del array (ronda 1 = votos originales de todos)
+                // La última ronda tiene muchos en 0 porque son "eliminados" progresivamente
+                const currentData = visualDataArray[0];
+
+                // Convertimos el objeto en un array para poder ordenar
+                let candidates = [];
+                for (const [key, value] of Object.entries(currentData)) {
+                    // Filtramos claves que no son candidatos (como "round")
+                    if (key !== 'round') {
+                        candidates.push({ name: key, votes: value });
+                    }
+                }
+
+                // Ordenamos de mayor a menor votos
+                candidates.sort((a, b) => b.votes - a.votes);
+
+                // Limpiamos y dibujamos
+                resultsDiv.innerHTML = '';
+
+                candidates.forEach((cand, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    // Top 3 colores especiales
+                    let rankColor = '#03dac6';
+                    if (index === 0) rankColor = 'gold';
+                    if (index === 1) rankColor = 'silver';
+                    if (index === 2) rankColor = '#cd7f32';
+
+                    card.innerHTML = `
+                        <div class="rank" style="color:${rankColor}">#${index + 1}</div>
+                        <div class="name">${cand.name}</div>
+                        <div class="votes">${cand.votes.toLocaleString()}</div>
+                    `;
+                    resultsDiv.appendChild(card);
+                });
+
+                // Actualizar hora
+                const now = new Date();
+                statusDiv.innerText = `Última actualización: ${now.toLocaleTimeString()}`;
+                loader.classList.add('hidden');
+
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerText = "Error al cargar. Reintentando...";
+            }
+        }
+
+        // Cargar al inicio
+        fetchData();
+
+        // Refrescar automáticamente cada 15 segundos
+        setInterval(fetchData, 15000);
+    </script>
+</body>
+
+</html>
