@@ -32,8 +32,8 @@
         body {
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-dark);
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%),
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%), 
                 radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
             color: var(--text-main);
             min-height: 100vh;
@@ -165,7 +165,7 @@
         .danger-section {
             margin-bottom: 40px;
         }
-
+        
         .section-title {
             display: flex;
             align-items: center;
@@ -197,23 +197,14 @@
         }
 
         @keyframes pulse-border {
-
-            0%,
-            100% {
-                border-color: rgba(239, 68, 68, 0.3);
-            }
-
-            50% {
-                border-color: rgba(239, 68, 68, 0.8);
-            }
+            0%, 100% { border-color: rgba(239, 68, 68, 0.3); }
+            50% { border-color: rgba(239, 68, 68, 0.8); }
         }
 
         .danger-card::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
+            top: 0; left: 0; bottom: 0;
             width: 4px;
             background: var(--danger);
             box-shadow: 0 0 15px var(--danger);
@@ -255,7 +246,7 @@
 
         .danger-votes .sub {
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.5);
         }
 
         /* --- SECTION: LEADERBOARD --- */
@@ -264,7 +255,7 @@
             grid-template-columns: 1fr;
             gap: 12px;
         }
-
+        
         /* En pantallas grandes, 2 columnas para que no sea tan largo */
         @media (min-width: 900px) {
             .leaderboard-container {
@@ -297,28 +288,17 @@
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.05);
             color: var(--text-muted);
             font-weight: 700;
             font-size: 0.9rem;
             flex-shrink: 0;
         }
 
-        .rank-1 {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #000;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
-        }
-
-        .rank-2 {
-            background: linear-gradient(135deg, #e5e7eb, #9ca3af);
-            color: #000;
-        }
-
-        .rank-3 {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            color: #fff;
-        }
+        .rank-1 { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
+        /* CONFLICT RESOLVED: Kept .rank-2 logic */
+        .rank-2 { background: linear-gradient(135deg, #e5e7eb, #9ca3af); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
 
         /* Avatar Small */
         .avatar-sm {
@@ -326,12 +306,10 @@
             height: 42px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255,255,255,0.1);
         }
-
-        .rank-1+.content .avatar-sm {
-            border-color: var(--gold);
-        }
+        
+        .rank-1 + .content .avatar-sm { border-color: var(--gold); }
 
         /* Content */
         .row-content {
@@ -353,7 +331,7 @@
         .bar-bg {
             width: 100%;
             height: 4px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             border-radius: 2px;
             overflow: hidden;
         }
@@ -365,10 +343,8 @@
             width: 0%;
             transition: width 1s ease-out;
         }
-
-        .rank-1 .bar-fill {
-            background: var(--gold);
-        }
+        
+        .rank-1 .bar-fill { background: var(--gold); }
 
         /* Stats in Row */
         .row-stats {
@@ -391,75 +367,34 @@
             border-color: rgba(239, 68, 68, 0.3);
             background: rgba(239, 68, 68, 0.05);
         }
-
-        .row-danger .bar-fill {
-            background: var(--danger);
-        }
-
-        .row-danger .rank-badge {
-            color: var(--danger);
-            background: rgba(239, 68, 68, 0.1);
-        }
+        .row-danger .bar-fill { background: var(--danger); }
+        .row-danger .rank-badge { color: var(--danger); background: rgba(239, 68, 68, 0.1); }
 
         /* Utility */
-        .hidden {
-            display: none !important;
-        }
-
+        .hidden { display: none !important; }
         .loader {
             display: flex;
             justify-content: center;
             padding: 50px;
         }
-
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s infinite linear;
         }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Mobile Adjustments */
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .danger-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .danger-card {
-                padding: 16px;
-            }
-
-            .row-card {
-                padding: 10px;
-                gap: 10px;
-            }
-
-            .avatar-sm {
-                width: 36px;
-                height: 36px;
-            }
-
-            .actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            h1 { font-size: 1.8rem; }
+            .danger-grid { grid-template-columns: 1fr; }
+            .danger-card { padding: 16px; }
+            .row-card { padding: 10px; gap: 10px; }
+            .avatar-sm { width: 36px; height: 36px; }
+            .actions { flex-direction: column; width: 100%; }
+            .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -468,7 +403,7 @@
     <div class="wrapper">
         <header>
             <div class="brand-pill">Eliminaciones Día 4</div>
-            <h1>La Mansión de los Streamers</h1>
+            <h1>La Mansión</h1>
             <div style="color: var(--text-muted); font-size: 0.9rem;">Votación en tiempo real</div>
 
             <div class="actions">
@@ -511,8 +446,7 @@
                 <span style="font-size: 1.5rem;">⚠️</span>
                 <div>
                     <div style="color: white; font-weight: 700;">ZONA DE ELIMINACIÓN</div>
-                    <div style="font-size: 0.8rem; font-weight: 400;">Los participantes con menos votos actualmente.
-                    </div>
+                    <div style="font-size: 0.8rem; font-weight: 400;">Los participantes con menos votos actualmente.</div>
                 </div>
             </div>
             <div class="danger-grid" id="danger-grid">
@@ -539,7 +473,8 @@
     <script>
         // CONFIG
         const TARGET_URL = 'https://app.rankedvote.co/api/settings/rv/lamansiondia4';
-
+        
+        // CONFLICT RESOLVED: Kept modern compact list with correct genders
         const GENDER_MAP = {
             'May Osorio': 'F', 'Ness': 'F', 'Alejandra Buitrago': 'F', 'Cami Pulgarin': 'F',
             'Natalia Es mejor': 'F', 'Andyysuz': 'F', 'La Piquiña': 'F', 'Karen Orozco': 'F',
@@ -595,7 +530,7 @@
             const barWidth = (candidate.votes / maxVotes) * 100;
             const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
             const dangerClass = isDanger ? 'row-danger' : '';
-
+            
             return `
                 <div class="row-card ${dangerClass} ${rankClass}">
                     <div class="rank-badge ${rankClass}">${index + 1}</div>
@@ -623,7 +558,7 @@
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(TARGET_URL + '?_=' + Date.now());
                 const response = await fetch(proxyUrl, { cache: 'no-store' });
                 const json = await response.json();
-
+                
                 // Process Data
                 const rawData = json.payload.settings.results.visual_data[0];
                 let candidates = [];
@@ -631,13 +566,13 @@
                     if (key !== 'round') candidates.push({ name: key, votes: value });
                 }
                 candidates.sort((a, b) => b.votes - a.votes);
-
+                
                 const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
                 const maxVotes = candidates[0]?.votes || 1;
 
                 // Add percentage prop
                 candidates = candidates.map(c => ({
-                    ...c,
+                    ...c, 
                     percentage: ((c.votes / totalVotes) * 100).toFixed(1)
                 }));
 
@@ -682,7 +617,7 @@
             const now = new Date();
             const min = now.getMinutes();
             const sec = now.getSeconds();
-
+            
             // Fetch logic (every 5 mins)
             if (min % 5 === 0 && lastFetchMinute !== min) {
                 lastFetchMinute = min;
@@ -702,5 +637,4 @@
 
     </script>
 </body>
-
 </html>
