@@ -99,6 +99,7 @@
             text-decoration: none;
             transition: all 0.2s ease;
             font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .btn-vote {
@@ -161,7 +162,7 @@
             text-shadow: 0 0 15px rgba(244, 114, 182, 0.3);
         }
 
-        /* --- SECTION: DANGER ZONE (Top Priority) --- */
+        /* --- SECTION: DANGER ZONE --- */
         .danger-section {
             margin-bottom: 40px;
         }
@@ -249,14 +250,57 @@
             color: rgba(255,255,255,0.5);
         }
 
-        /* --- SECTION: LEADERBOARD --- */
+        /* --- FILTERS --- */
+        .filter-container {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 12px;
+            margin-left: auto; /* Push to right if in flex container */
+            width: fit-content;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 16px;
+            margin-top: 20px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+        }
+
+        /* --- LEADERBOARD --- */
         .leaderboard-container {
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
         }
         
-        /* En pantallas grandes, 2 columnas para que no sea tan largo */
         @media (min-width: 900px) {
             .leaderboard-container {
                 grid-template-columns: 1fr 1fr;
@@ -280,7 +324,6 @@
             transform: translateX(4px);
         }
 
-        /* Rank Badge */
         .rank-badge {
             width: 32px;
             height: 32px;
@@ -296,11 +339,9 @@
         }
 
         .rank-1 { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
-        /* CONFLICT RESOLVED: Kept .rank-2 logic */
         .rank-2 { background: linear-gradient(135deg, #e5e7eb, #9ca3af); color: #000; }
         .rank-3 { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
 
-        /* Avatar Small */
         .avatar-sm {
             width: 42px;
             height: 42px;
@@ -311,7 +352,6 @@
         
         .rank-1 + .content .avatar-sm { border-color: var(--gold); }
 
-        /* Content */
         .row-content {
             flex: 1;
             display: flex;
@@ -346,7 +386,6 @@
         
         .rank-1 .bar-fill { background: var(--gold); }
 
-        /* Stats in Row */
         .row-stats {
             text-align: right;
             min-width: 70px;
@@ -362,7 +401,6 @@
             color: var(--text-muted);
         }
 
-        /* Danger Row styling (for context in list) */
         .row-danger {
             border-color: rgba(239, 68, 68, 0.3);
             background: rgba(239, 68, 68, 0.05);
@@ -372,11 +410,7 @@
 
         /* Utility */
         .hidden { display: none !important; }
-        .loader {
-            display: flex;
-            justify-content: center;
-            padding: 50px;
-        }
+        .loader { display: flex; justify-content: center; padding: 50px; }
         .spinner {
             width: 40px; height: 40px;
             border: 3px solid rgba(255,255,255,0.1);
@@ -386,7 +420,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Mobile Adjustments */
         @media (max-width: 600px) {
             h1 { font-size: 1.8rem; }
             .danger-grid { grid-template-columns: 1fr; }
@@ -395,6 +428,9 @@
             .avatar-sm { width: 36px; height: 36px; }
             .actions { flex-direction: column; width: 100%; }
             .btn { width: 100%; justify-content: center; }
+            .list-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .filter-container { width: 100%; justify-content: space-between; }
+            .filter-btn { flex: 1; text-align: center; }
         }
     </style>
 </head>
@@ -440,7 +476,7 @@
             <div class="spinner"></div>
         </div>
 
-        <!-- DANGER ZONE: Top of page so no scrolling needed -->
+        <!-- DANGER ZONE -->
         <div id="danger-area" class="danger-section hidden">
             <div class="section-title">
                 <span style="font-size: 1.5rem;">⚠️</span>
@@ -449,20 +485,26 @@
                     <div style="font-size: 0.8rem; font-weight: 400;">Los participantes con menos votos actualmente.</div>
                 </div>
             </div>
-            <div class="danger-grid" id="danger-grid">
-                <!-- Cards injected via JS -->
-            </div>
+            <div class="danger-grid" id="danger-grid"></div>
         </div>
 
         <!-- LEADERBOARD -->
         <div id="main-list-area" class="hidden">
-            <div class="section-title" style="margin-top: 20px;">
-                <span>🏆</span>
-                <span>Ranking General</span>
+            <div class="list-header">
+                <div class="section-title" style="margin: 0;">
+                    <span>🏆</span>
+                    <span>Ranking General</span>
+                </div>
+                
+                <!-- NEW: Filters -->
+                <div class="filter-container">
+                    <button class="filter-btn active" onclick="setFilter('all')" id="btn-all">Todos</button>
+                    <button class="filter-btn" onclick="setFilter('M')" id="btn-m">Hombres</button>
+                    <button class="filter-btn" onclick="setFilter('F')" id="btn-f">Mujeres</button>
+                </div>
             </div>
-            <div class="leaderboard-container" id="leaderboard">
-                <!-- Rows injected via JS -->
-            </div>
+            
+            <div class="leaderboard-container" id="leaderboard"></div>
         </div>
 
         <div style="text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.8rem;">
@@ -471,10 +513,9 @@
     </div>
 
     <script>
-        // CONFIG
+        // --- CONFIG ---
         const TARGET_URL = 'https://app.rankedvote.co/api/settings/rv/lamansiondia4';
         
-        // CONFLICT RESOLVED: Kept modern compact list with correct genders
         const GENDER_MAP = {
             'May Osorio': 'F', 'Ness': 'F', 'Alejandra Buitrago': 'F', 'Cami Pulgarin': 'F',
             'Natalia Es mejor': 'F', 'Andyysuz': 'F', 'La Piquiña': 'F', 'Karen Orozco': 'F',
@@ -497,7 +538,12 @@
             'Male': 'https://i.imgur.com/RuwqN0ft.png', 'Soley': 'https://i.imgur.com/8v0CfNBt.png'
         };
 
-        // HELPERS
+        // --- STATE ---
+        let allCandidates = [];
+        let globalDangerList = [];
+        let currentFilter = 'all';
+
+        // --- HELPERS ---
         const getGender = (name) => GENDER_MAP[name] || 'U';
         const getAvatar = (name) => AVATAR_MAP[name] || 'https://via.placeholder.com/80?text=?';
 
@@ -508,7 +554,7 @@
             return filtered.filter(c => c.votes === minVotes);
         }
 
-        // RENDERERS
+        // --- RENDERERS ---
         function renderDangerCard(candidate) {
             const percentage = candidate.percentage;
             return `
@@ -552,7 +598,36 @@
             `;
         }
 
-        // MAIN LOGIC
+        // --- LOGIC ---
+        function setFilter(type) {
+            currentFilter = type;
+            
+            // UI Update
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if(type === 'all') document.getElementById('btn-all').classList.add('active');
+            if(type === 'M') document.getElementById('btn-m').classList.add('active');
+            if(type === 'F') document.getElementById('btn-f').classList.add('active');
+
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard');
+            list.innerHTML = '';
+
+            // Filter
+            const filtered = currentFilter === 'all' 
+                ? allCandidates 
+                : allCandidates.filter(c => getGender(c.name) === currentFilter);
+            
+            // Determine max votes for bar visualization (Local max so the leader of the group has full bar)
+            const localMax = filtered.length > 0 ? filtered[0].votes : 1;
+
+            filtered.forEach((c, i) => {
+                list.innerHTML += renderRow(c, i, localMax, globalDangerList.includes(c.name));
+            });
+        }
+
         async function fetchData() {
             try {
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(TARGET_URL + '?_=' + Date.now());
@@ -568,7 +643,6 @@
                 candidates.sort((a, b) => b.votes - a.votes);
                 
                 const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
-                const maxVotes = candidates[0]?.votes || 1;
 
                 // Add percentage prop
                 candidates = candidates.map(c => ({
@@ -576,29 +650,28 @@
                     percentage: ((c.votes / totalVotes) * 100).toFixed(1)
                 }));
 
+                // Update Globals
+                allCandidates = candidates;
+
                 // Identify lowest
                 const lowestMales = findLowest(candidates, 'M');
                 const lowestFemales = findLowest(candidates, 'F');
-                const dangerNames = [...lowestMales, ...lowestFemales].map(c => c.name);
+                globalDangerList = [...lowestMales, ...lowestFemales].map(c => c.name);
 
-                // Update DOM
+                // Update Stats DOM
                 document.getElementById('totalVotes').textContent = totalVotes.toLocaleString();
                 document.getElementById('totalCandidates').textContent = candidates.length;
                 document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
 
-                // 1. Render Danger Zone (Top of page)
+                // 1. Render Danger Zone (Always visible, always global context)
                 const dangerGrid = document.getElementById('danger-grid');
                 dangerGrid.innerHTML = '';
                 [...lowestFemales, ...lowestMales].forEach(c => {
                     dangerGrid.innerHTML += renderDangerCard(c);
                 });
 
-                // 2. Render Leaderboard (Bottom of page)
-                const leaderboard = document.getElementById('leaderboard');
-                leaderboard.innerHTML = '';
-                candidates.forEach((c, i) => {
-                    leaderboard.innerHTML += renderRow(c, i, maxVotes, dangerNames.includes(c.name));
-                });
+                // 2. Render Leaderboard (Respects filter)
+                renderLeaderboard();
 
                 // Visibility
                 document.getElementById('loader').classList.add('hidden');
@@ -618,13 +691,11 @@
             const min = now.getMinutes();
             const sec = now.getSeconds();
             
-            // Fetch logic (every 5 mins)
             if (min % 5 === 0 && lastFetchMinute !== min) {
                 lastFetchMinute = min;
                 fetchData();
             }
 
-            // Countdown display
             const remMin = 4 - (min % 5);
             const remSec = 59 - sec;
             const display = `${remMin}:${remSec.toString().padStart(2, '0')}`;
