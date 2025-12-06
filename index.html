@@ -289,6 +289,37 @@
             gap: 8px;
         }
 
+        .candidate-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .candidate-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            flex-shrink: 0;
+        }
+
+        .result-row.top1 .candidate-avatar {
+            border-color: rgba(251, 191, 36, 0.5);
+        }
+
+        .result-row.top2 .candidate-avatar {
+            border-color: rgba(156, 163, 175, 0.5);
+        }
+
+        .result-row.top3 .candidate-avatar {
+            border-color: rgba(180, 83, 9, 0.5);
+        }
+
+        .result-row.danger-zone .candidate-avatar {
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+
         .candidate-name {
             font-weight: 600;
             font-size: 1rem;
@@ -579,10 +610,8 @@
 
             <div class="social-links">
                 <a href="https://kick.com/westcol" target="_blank" class="social-link kick">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M1.333 0v24h5.338V12.017L12.021 24h6.411l-7.457-12.655L18.122 0H11.99l-5.32 9.627V0H1.334zm15.283 0l5.107 11.802L15.714 24h6.538l2.414-6.198L22.668 24h.003V0h-6.055z" />
-                    </svg>
+                    <img src="https://i.imgur.com/KtdMrMY.png" alt="Kick" width="20" height="20"
+                        style="object-fit: contain;">
                     Westcol Live
                 </a>
                 <a href="https://x.com/i/communities/1891373388368932913" target="_blank" class="social-link twitter">
@@ -669,8 +698,36 @@
             'Pesque': 'M'
         };
 
+        // Mapeo de avatares (usando thumbnails de Imgur con sufijo 't' para optimizar ~10kb c/u)
+        const AVATAR_MAP = {
+            'Ismael Sanchez': 'https://i.imgur.com/UaGpHqAt.png',
+            'Pesque': 'https://i.imgur.com/RdSDKsRt.png',
+            'Edits De Mierda': 'https://i.imgur.com/Us5nUSJt.png',
+            'Juanda': 'https://i.imgur.com/h6rIkXEt.png',
+            'La Piquiña': 'https://i.imgur.com/RrVhcUZt.png',
+            'KingLuiz': 'https://i.imgur.com/qQOy7Cmt.png',
+            'Soy Frezo': 'https://i.imgur.com/JvQNhAUt.png',
+            'El Agropecuario': 'https://i.imgur.com/NncLW7Et.png',
+            'El Domi': 'https://i.imgur.com/yon3rMZt.png',
+            'Ness': 'https://i.imgur.com/3UZmzBlt.png',
+            'Natalia Es mejor': 'https://i.imgur.com/1W1NH2dt.png',
+            'El Cone': 'https://i.imgur.com/uJlFcL3t.png',
+            'Andyysuz': 'https://i.imgur.com/fbiaXogt.png',
+            'Emikukis': 'https://i.imgur.com/eVRMQl0t.png',
+            'May Osorio': 'https://i.imgur.com/vyNXVNVt.png',
+            'Karen Orozco': 'https://i.imgur.com/b8SNllXt.png',
+            'Alejandra Buitrago': 'https://i.imgur.com/3WF7giat.png',
+            'Cami Pulgarin': 'https://i.imgur.com/4JOgnRjt.png',
+            'Male': 'https://i.imgur.com/RuwqN0ft.png',
+            'Soley': 'https://i.imgur.com/8v0CfNBt.png'
+        };
+
         function getGender(name) {
             return GENDER_MAP[name] || 'U'; // U = Unknown
+        }
+
+        function getAvatar(name) {
+            return AVATAR_MAP[name] || '';
         }
 
         function findLowestByGender(candidates, gender) {
@@ -748,10 +805,16 @@
 
                     const row = document.createElement('div');
                     row.className = `result-row ${topClass} ${isDanger ? 'danger-zone' : ''}`;
+                    const avatarUrl = getAvatar(cand.name);
+                    const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" alt="${cand.name}" class="candidate-avatar" loading="lazy">` : '';
+
                     row.innerHTML = `
                         <div class="rank ${rankClass}">${index + 1}</div>
                         <div class="candidate-info">
-                            <span class="candidate-name">${cand.name}${dangerLabel}</span>
+                            <div class="candidate-header">
+                                ${avatarHtml}
+                                <span class="candidate-name">${cand.name}${dangerLabel}</span>
+                            </div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${progressClass}" style="width: ${barWidth}%"></div>
                             </div>
