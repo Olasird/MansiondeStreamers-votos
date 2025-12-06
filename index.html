@@ -425,6 +425,113 @@
             font-size: 0.8rem;
         }
 
+        /* Elimination Banner */
+        .elimination-banner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .elimination-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .elimination-banner .banner-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .elimination-banner .banner-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .elimination-banner .banner-text {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .elimination-banner .banner-text strong {
+            color: #fbbf24;
+        }
+
+        /* Danger Zone - Lowest votes highlight */
+        .result-row.danger-zone {
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 50%, transparent 100%);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 12px;
+            margin: 4px 0;
+            animation: dangerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dangerPulse {
+
+            0%,
+            100% {
+                border-color: rgba(239, 68, 68, 0.4);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+
+            50% {
+                border-color: rgba(239, 68, 68, 0.7);
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+            }
+        }
+
+        .result-row.danger-zone .candidate-name::after {
+            content: ' ⚠️';
+            font-size: 0.85rem;
+        }
+
+        .result-row.danger-zone .rank {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+        }
+
+        .result-row.danger-zone .progress-fill {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .danger-label {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* Responsive */
         @media (max-width: 640px) {
             .stats-grid {
@@ -488,6 +595,17 @@
             </div>
         </div>
 
+        <!-- Elimination Banner -->
+        <div class="elimination-banner">
+            <div class="banner-icon">🔥</div>
+            <div class="banner-title">¡Día de Salvación!</div>
+            <div class="banner-text">
+                Hoy votas para <strong>SALVAR</strong> a tu streamer favorito.<br>
+                El <strong>hombre</strong> y la <strong>mujer</strong> con menos votos quedarán
+                <strong>eliminados</strong>.
+            </div>
+        </div>
+
         <div id="stats" class="stats-grid hidden">
             <div class="stat-card">
                 <div class="value" id="totalVotes">0</div>
@@ -525,6 +643,42 @@
     <script>
         const TARGET_URL = 'https://app.rankedvote.co/api/settings/rv/lamansiondia4';
 
+        // Mapeo de género de los participantes
+        const GENDER_MAP = {
+            // Mujeres
+            'May Osorio': 'F',
+            'Ness': 'F',
+            'Alejandra Buitrago': 'F',
+            'Cami Pulgarin': 'F',
+            'Natalia Es mejor': 'F',
+            'Andyysuz': 'F',
+            'La Piquiña': 'F',
+            'Karen Orozco': 'F',
+            'Soley': 'F',
+            'Emikukis': 'F',
+            // Hombres
+            'Ismael Sanchez': 'M',
+            'El Agropecuario': 'M',
+            'Juanda': 'M',
+            'El Cone': 'M',
+            'Edits De Mierda': 'M',
+            'El Domi': 'M',
+            'Male': 'M',
+            'Soy Frezo': 'M',
+            'KingLuiz': 'M',
+            'Pesque': 'M'
+        };
+
+        function getGender(name) {
+            return GENDER_MAP[name] || 'U'; // U = Unknown
+        }
+
+        function findLowestByGender(candidates, gender) {
+            // Filtrar por género y encontrar el de menos votos (ya están ordenados de mayor a menor)
+            const filtered = candidates.filter(c => getGender(c.name) === gender);
+            return filtered.length > 0 ? filtered[filtered.length - 1].name : null;
+        }
+
         async function fetchData() {
             const statusEl = document.getElementById('status');
             const loaderEl = document.getElementById('loader');
@@ -553,6 +707,10 @@
                 }
                 candidates.sort((a, b) => b.votes - a.votes);
 
+                // Encontrar el hombre y mujer con menos votos
+                const lowestMale = findLowestByGender(candidates, 'M');
+                const lowestFemale = findLowestByGender(candidates, 'F');
+
                 const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
                 const maxVotes = candidates[0]?.votes || 1;
 
@@ -569,17 +727,31 @@
                     let topClass = '';
                     let rankClass = 'normal';
                     let progressClass = '';
+                    let isDanger = false;
+                    let dangerLabel = '';
 
-                    if (index === 0) { topClass = 'top1'; rankClass = 'gold'; progressClass = 'top1'; }
-                    else if (index === 1) { topClass = 'top2'; rankClass = 'silver'; progressClass = 'top2'; }
-                    else if (index === 2) { topClass = 'top3'; rankClass = 'bronze'; progressClass = 'top3'; }
+                    // Verificar si está en zona de peligro
+                    if (cand.name === lowestMale) {
+                        isDanger = true;
+                        dangerLabel = '<span class="danger-label">En Peligro</span>';
+                    } else if (cand.name === lowestFemale) {
+                        isDanger = true;
+                        dangerLabel = '<span class="danger-label">En Peligro</span>';
+                    }
+
+                    // Solo aplicar estilos de top si no está en peligro
+                    if (!isDanger) {
+                        if (index === 0) { topClass = 'top1'; rankClass = 'gold'; progressClass = 'top1'; }
+                        else if (index === 1) { topClass = 'top2'; rankClass = 'silver'; progressClass = 'top2'; }
+                        else if (index === 2) { topClass = 'top3'; rankClass = 'bronze'; progressClass = 'top3'; }
+                    }
 
                     const row = document.createElement('div');
-                    row.className = `result-row ${topClass}`;
+                    row.className = `result-row ${topClass} ${isDanger ? 'danger-zone' : ''}`;
                     row.innerHTML = `
                         <div class="rank ${rankClass}">${index + 1}</div>
                         <div class="candidate-info">
-                            <span class="candidate-name">${cand.name}</span>
+                            <span class="candidate-name">${cand.name}${dangerLabel}</span>
                             <div class="progress-bar">
                                 <div class="progress-fill ${progressClass}" style="width: ${barWidth}%"></div>
                             </div>
