@@ -4,12 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMDLS - Votos</title>
+    <title>LMDLS - Dashboard de Votación</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: rgba(24, 24, 27, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+            --gold: #fbbf24;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -17,375 +30,395 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background: #0f0f1a;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
             background-image:
-                radial-gradient(ellipse at 20% 0%, rgba(120, 80, 200, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 100%, rgba(80, 150, 255, 0.1) 0%, transparent 50%);
-            color: #ffffff;
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
+            color: var(--text-main);
             min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* --- Layout & Container --- */
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 40px 20px;
+        /* --- Header --- */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 30px;
+            position: relative;
         }
 
-        .logo {
-            font-size: 0.85rem;
+        .brand-pill {
+            background: rgba(139, 92, 246, 0.1);
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: #a78bfa;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             margin-bottom: 12px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
         }
 
-        .header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
 
-        .header .subtitle {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1rem;
-            font-weight: 400;
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .header-logo {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 1000px;
-            height: auto;
-            z-index: 0;
-            opacity: 0.06;
-            pointer-events: none;
-        }
-
-        @media (max-width: 640px) {
-            .header-logo {
-                width: 350px;
-            }
-        }
-
-        /* Vote Button */
-        .vote-btn {
+        .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
             text-decoration: none;
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
-        }
-
-        .vote-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-
-        .stat-card .value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-card .label {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 6px;
-            font-weight: 500;
-        }
-
-        .stat-card.timer .value {
-            font-family: 'SF Mono', 'Consolas', monospace;
-            background: linear-gradient(135deg, #fb923c, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 2px;
-        }
-
-        .stat-card.timer .value.updating {
-            animation: pulse 0.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.4;
-            }
-        }
-
-        /* Status Bar */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .status-text {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #34d399;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #34d399;
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
-            box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
-        }
-
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.3;
-            }
-        }
-
-        /* Results */
-        .results-container {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .result-row {
-            display: grid;
-            grid-template-columns: 55px 1fr auto;
-            gap: 16px;
-            padding: 18px 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            align-items: center;
             transition: all 0.2s ease;
+            font-size: 0.95rem;
         }
 
-        .result-row:last-child {
-            border-bottom: none;
+        .btn-vote {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .result-row:hover {
-            background: rgba(255, 255, 255, 0.03);
+        .btn-vote:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
         }
 
-        /* Podium Colors */
-        .result-row.top1 {
-            background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, transparent 100%);
+        .btn-social {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
         }
 
-        .result-row.top2 {
-            background: linear-gradient(90deg, rgba(156, 163, 175, 0.08) 0%, transparent 100%);
+        .btn-social:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
-        .result-row.top3 {
-            background: linear-gradient(90deg, rgba(180, 83, 9, 0.08) 0%, transparent 100%);
+        /* --- Stats Dashboard --- */
+        .stats-deck {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
         }
 
-        .rank {
-            width: 40px;
-            height: 40px;
+        .stat-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-box .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .stat-box .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-box .number {
+            color: #f472b6;
+            text-shadow: 0 0 15px rgba(244, 114, 182, 0.3);
+        }
+
+        /* --- SECTION: DANGER ZONE (Top Priority) --- */
+        .danger-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .danger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .danger-card {
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(20, 20, 20, 0.8));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.1);
+            animation: pulse-border 3s infinite;
+        }
+
+        @keyframes pulse-border {
+
+            0%,
+            100% {
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+
+            50% {
+                border-color: rgba(239, 68, 68, 0.8);
+            }
+        }
+
+        .danger-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--danger);
+            box-shadow: 0 0 15px var(--danger);
+        }
+
+        .danger-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--danger);
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .danger-info h3 {
+            font-size: 1.25rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .danger-info p {
+            color: var(--danger);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .danger-votes {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .danger-votes .count {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .danger-votes .sub {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* --- SECTION: LEADERBOARD --- */
+        .leaderboard-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        /* En pantallas grandes, 2 columnas para que no sea tan largo */
+        @media (min-width: 900px) {
+            .leaderboard-container {
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
+            }
+        }
+
+        .row-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 12px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .row-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+        }
+
+        /* Rank Badge */
+        .rank-badge {
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #000;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #e5e7eb, #9ca3af);
+            color: #000;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #fff;
+        }
+
+        /* Avatar Small */
+        .avatar-sm {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rank-1+.content .avatar-sm {
+            border-color: var(--gold);
+        }
+
+        /* Content */
+        .row-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+
+        .rank-1 .bar-fill {
+            background: var(--gold);
+        }
+
+        /* Stats in Row */
+        .row-stats {
+            text-align: right;
+            min-width: 70px;
+        }
+
+        .row-votes {
             font-weight: 700;
             font-size: 0.95rem;
         }
 
-        .rank.gold {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #1f1f1f;
+        .row-percent {
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
 
-        .rank.silver {
-            background: linear-gradient(135deg, #9ca3af, #6b7280);
-            color: #1f1f1f;
+        /* Danger Row styling (for context in list) */
+        .row-danger {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
         }
 
-        .rank.bronze {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            color: #ffffff;
+        .row-danger .bar-fill {
+            background: var(--danger);
         }
 
-        .rank.normal {
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.4);
+        .row-danger .rank-badge {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
         }
 
-        .candidate-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        /* Utility */
+        .hidden {
+            display: none !important;
         }
 
-        .candidate-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .candidate-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            flex-shrink: 0;
-        }
-
-        .result-row.top1 .candidate-avatar {
-            border-color: rgba(251, 191, 36, 0.5);
-        }
-
-        .result-row.top2 .candidate-avatar {
-            border-color: rgba(156, 163, 175, 0.5);
-        }
-
-        .result-row.top3 .candidate-avatar {
-            border-color: rgba(180, 83, 9, 0.5);
-        }
-
-        .result-row.danger-zone .candidate-avatar {
-            border-color: rgba(239, 68, 68, 0.6);
-        }
-
-        .candidate-name {
-            font-weight: 600;
-            font-size: 1rem;
-            color: #ffffff;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 3px;
-            overflow: hidden;
-            max-width: 280px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-        }
-
-        .progress-fill.top1 {
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
-        }
-
-        .progress-fill.top2 {
-            background: linear-gradient(90deg, #9ca3af, #6b7280);
-        }
-
-        .progress-fill.top3 {
-            background: linear-gradient(90deg, #d97706, #b45309);
-        }
-
-        .votes-section {
-            text-align: right;
-            min-width: 100px;
-        }
-
-        .votes-count {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #ffffff;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .percentage {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.85rem;
-            margin-top: 2px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* Loader */
         .loader {
             display: flex;
             justify-content: center;
-            padding: 80px;
+            padding: 50px;
         }
 
         .spinner {
             width: 40px;
             height: 40px;
             border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #8b5cf6;
+            border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1s infinite linear;
         }
 
         @keyframes spin {
@@ -394,505 +427,279 @@
             }
         }
 
-        .hidden {
-            display: none;
-        }
-
-        /* Social Links */
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            border: 1px solid;
-        }
-
-        .social-link.kick {
-            background: rgba(83, 252, 24, 0.1);
-            border-color: rgba(83, 252, 24, 0.3);
-            color: #53fc18;
-        }
-
-        .social-link.kick:hover {
-            background: rgba(83, 252, 24, 0.2);
-            border-color: rgba(83, 252, 24, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .social-link.twitter {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .social-link.twitter:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .social-link svg {
-            flex-shrink: 0;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: rgba(255, 255, 255, 0.25);
-            font-size: 0.8rem;
-        }
-
-        /* Elimination Banner */
-        .elimination-banner {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 16px;
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .elimination-banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                left: -100%;
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
             }
 
-            100% {
-                left: 100%;
-            }
-        }
-
-        .elimination-banner .banner-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .elimination-banner .banner-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #ef4444;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .elimination-banner .banner-text {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.5;
-        }
-
-        .elimination-banner .banner-text strong {
-            color: #fbbf24;
-        }
-
-        /* Danger Zone - Lowest votes highlight */
-        .result-row.danger-zone {
-            background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 50%, transparent 100%);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            border-radius: 12px;
-            margin: 4px 0;
-            animation: dangerPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes dangerPulse {
-
-            0%,
-            100% {
-                border-color: rgba(239, 68, 68, 0.4);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            .danger-grid {
+                grid-template-columns: 1fr;
             }
 
-            50% {
-                border-color: rgba(239, 68, 68, 0.7);
-                box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
-            }
-        }
-
-        .result-row.danger-zone .candidate-name::after {
-            content: ' ⚠️';
-            font-size: 0.85rem;
-        }
-
-        .result-row.danger-zone .rank {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: #ffffff;
-        }
-
-        .result-row.danger-zone .progress-fill {
-            background: linear-gradient(90deg, #ef4444, #dc2626);
-        }
-
-        .danger-label {
-            display: inline-block;
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-left: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
+            .danger-card {
+                padding: 16px;
             }
 
-            .stats-grid .stat-card:last-child {
-                grid-column: span 2;
-            }
-
-            .result-row {
-                grid-template-columns: 45px 1fr;
-                gap: 12px;
-            }
-
-            .votes-section {
-                grid-column: 2;
-                text-align: left;
-                display: flex;
+            .row-card {
+                padding: 10px;
                 gap: 10px;
-                align-items: baseline;
             }
 
-            .header h1 {
-                font-size: 1.75rem;
+            .avatar-sm {
+                width: 36px;
+                height: 36px;
+            }
+
+            .actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 
 <body>
-    <img src="https://i.imgur.com/I1Bj4Im.png" alt="La Mansión de los Streamers" class="header-logo">
+    <div class="wrapper">
+        <header>
+            <div class="brand-pill">Eliminaciones Día 4</div>
+            <h1>La Mansión</h1>
+            <div style="color: var(--text-muted); font-size: 0.9rem;">Votación en tiempo real</div>
 
-    <div class="container">
-        <div class="header">
-            <div class="logo">Eliminaciones Día 4</div>
-            <h1>La Mansión de los Streamers</h1>
-            <p class="subtitle">Votación en tiempo real</p>
-            <a href="https://app.rankedvote.co/rv/lamansiondia4/vote" target="_blank" class="vote-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-                Votar Ahora
-            </a>
-
-            <div class="social-links">
-                <a href="https://kick.com/westcol" target="_blank" class="social-link kick">
-                    <img src="https://i.imgur.com/KtdMrMY.png" alt="Kick" width="20" height="20"
-                        style="object-fit: contain;">
-                    Westcol Live
-                </a>
-                <a href="https://x.com/i/communities/1891373388368932913" target="_blank" class="social-link twitter">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            <div class="actions">
+                <a href="https://app.rankedvote.co/rv/lamansiondia4/vote" target="_blank" class="btn btn-vote">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
-                    W REALS
+                    Votar Ahora
+                </a>
+                <a href="https://kick.com/westcol" target="_blank" class="btn btn-social">
+                    <img src="https://i.imgur.com/KtdMrMY.png" alt="Kick" width="18" height="18">
+                    Ver Stream
                 </a>
             </div>
-        </div>
+        </header>
 
-        <!-- Elimination Banner -->
-        <div class="elimination-banner">
-            <div class="banner-icon">🔥</div>
-            <div class="banner-title">¡Día de Salvación!</div>
-            <div class="banner-text">
-                Hoy votas para <strong>SALVAR</strong> a tu streamer favorito.<br>
-                El <strong>hombre</strong> y la <strong>mujer</strong> con menos votos quedarán
-                <strong>eliminados</strong>.
-            </div>
-        </div>
-
-        <div id="stats" class="stats-grid hidden">
-            <div class="stat-card">
-                <div class="value" id="totalVotes">0</div>
+        <!-- Stats Overview -->
+        <div id="stats" class="stats-deck hidden">
+            <div class="stat-box">
                 <div class="label">Votos Totales</div>
+                <div class="number" id="totalVotes">0</div>
             </div>
-            <div class="stat-card">
-                <div class="value" id="totalCandidates">0</div>
+            <div class="stat-box">
                 <div class="label">Participantes</div>
+                <div class="number" id="totalCandidates">0</div>
             </div>
-            <div class="stat-card timer">
-                <div class="value" id="countdown">--:--</div>
-                <div class="label">Próxima Actualización</div>
+            <div class="stat-box timer-box">
+                <div class="label">Actualización</div>
+                <div class="number" id="countdown">--:--</div>
             </div>
-        </div>
-
-        <div class="status-bar">
-            <span class="status-text" id="status">Cargando datos...</span>
-            <span class="live-indicator">
-                <span class="live-dot"></span>
-                EN VIVO
-            </span>
         </div>
 
         <div id="loader" class="loader">
             <div class="spinner"></div>
         </div>
 
-        <div id="results" class="results-container hidden"></div>
+        <!-- DANGER ZONE: Top of page so no scrolling needed -->
+        <div id="danger-area" class="danger-section hidden">
+            <div class="section-title">
+                <span style="font-size: 1.5rem;">⚠️</span>
+                <div>
+                    <div style="color: white; font-weight: 700;">ZONA DE ELIMINACIÓN</div>
+                    <div style="font-size: 0.8rem; font-weight: 400;">Los participantes con menos votos actualmente.
+                    </div>
+                </div>
+            </div>
+            <div class="danger-grid" id="danger-grid">
+                <!-- Cards injected via JS -->
+            </div>
+        </div>
 
-        <div class="footer">
-            Los datos se actualizan cada 5 minutos automáticamente
+        <!-- LEADERBOARD -->
+        <div id="main-list-area" class="hidden">
+            <div class="section-title" style="margin-top: 20px;">
+                <span>🏆</span>
+                <span>Ranking General</span>
+            </div>
+            <div class="leaderboard-container" id="leaderboard">
+                <!-- Rows injected via JS -->
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.8rem;">
+            Actualizado automáticamente. <span id="last-update">--:--</span>
         </div>
     </div>
 
     <script>
+        // CONFIG
         const TARGET_URL = 'https://app.rankedvote.co/api/settings/rv/lamansiondia4';
 
-        // Mapeo de género de los participantes
         const GENDER_MAP = {
-            // Mujeres
-            'May Osorio': 'F',
-            'Ness': 'F',
-            'Alejandra Buitrago': 'F',
-            'Cami Pulgarin': 'F',
-            'Natalia Es mejor': 'F',
-            'Andyysuz': 'F',
-            'La Piquiña': 'F',
-            'Karen Orozco': 'F',
-            'Soley': 'F',
-            'Emikukis': 'F',
-            // Hombres
-            'Ismael Sanchez': 'M',
-            'El Agropecuario': 'M',
-            'Juanda': 'M',
-            'El Cone': 'M',
-            'Edits De Mierda': 'M',
-            'El Domi': 'M',
-            'Male': 'M',
-            'Soy Frezo': 'M',
-            'KingLuiz': 'M',
-            'Pesque': 'M'
+            'May Osorio': 'F', 'Ness': 'F', 'Alejandra Buitrago': 'F', 'Cami Pulgarin': 'F',
+            'Natalia Es mejor': 'F', 'Andyysuz': 'F', 'La Piquiña': 'F', 'Karen Orozco': 'F',
+            'Soley': 'F', 'Emikukis': 'F',
+            'Ismael Sanchez': 'M', 'El Agropecuario': 'M', 'Juanda': 'M', 'El Cone': 'M',
+            'Edits De Mierda': 'M', 'El Domi': 'M', 'Male': 'M', 'Soy Frezo': 'M',
+            'KingLuiz': 'M', 'Pesque': 'M'
         };
 
-        // Mapeo de avatares (usando thumbnails de Imgur con sufijo 't' para optimizar ~10kb c/u)
         const AVATAR_MAP = {
-            'Ismael Sanchez': 'https://i.imgur.com/UaGpHqAt.png',
-            'Pesque': 'https://i.imgur.com/RdSDKsRt.png',
-            'Edits De Mierda': 'https://i.imgur.com/Us5nUSJt.png',
-            'Juanda': 'https://i.imgur.com/h6rIkXEt.png',
-            'La Piquiña': 'https://i.imgur.com/RrVhcUZt.png',
-            'KingLuiz': 'https://i.imgur.com/qQOy7Cmt.png',
-            'Soy Frezo': 'https://i.imgur.com/JvQNhAUt.png',
-            'El Agropecuario': 'https://i.imgur.com/NncLW7Et.png',
-            'El Domi': 'https://i.imgur.com/yon3rMZt.png',
-            'Ness': 'https://i.imgur.com/3UZmzBlt.png',
-            'Natalia Es mejor': 'https://i.imgur.com/1W1NH2dt.png',
-            'El Cone': 'https://i.imgur.com/uJlFcL3t.png',
-            'Andyysuz': 'https://i.imgur.com/fbiaXogt.png',
-            'Emikukis': 'https://i.imgur.com/eVRMQl0t.png',
-            'May Osorio': 'https://i.imgur.com/vyNXVNVt.png',
-            'Karen Orozco': 'https://i.imgur.com/b8SNllXt.png',
-            'Alejandra Buitrago': 'https://i.imgur.com/3WF7giat.png',
-            'Cami Pulgarin': 'https://i.imgur.com/4JOgnRjt.png',
-            'Male': 'https://i.imgur.com/RuwqN0ft.png',
-            'Soley': 'https://i.imgur.com/8v0CfNBt.png'
+            'Ismael Sanchez': 'https://i.imgur.com/UaGpHqAt.png', 'Pesque': 'https://i.imgur.com/RdSDKsRt.png',
+            'Edits De Mierda': 'https://i.imgur.com/Us5nUSJt.png', 'Juanda': 'https://i.imgur.com/h6rIkXEt.png',
+            'La Piquiña': 'https://i.imgur.com/RrVhcUZt.png', 'KingLuiz': 'https://i.imgur.com/qQOy7Cmt.png',
+            'Soy Frezo': 'https://i.imgur.com/JvQNhAUt.png', 'El Agropecuario': 'https://i.imgur.com/NncLW7Et.png',
+            'El Domi': 'https://i.imgur.com/yon3rMZt.png', 'Ness': 'https://i.imgur.com/3UZmzBlt.png',
+            'Natalia Es mejor': 'https://i.imgur.com/1W1NH2dt.png', 'El Cone': 'https://i.imgur.com/uJlFcL3t.png',
+            'Andyysuz': 'https://i.imgur.com/fbiaXogt.png', 'Emikukis': 'https://i.imgur.com/eVRMQl0t.png',
+            'May Osorio': 'https://i.imgur.com/vyNXVNVt.png', 'Karen Orozco': 'https://i.imgur.com/b8SNllXt.png',
+            'Alejandra Buitrago': 'https://i.imgur.com/3WF7giat.png', 'Cami Pulgarin': 'https://i.imgur.com/4JOgnRjt.png',
+            'Male': 'https://i.imgur.com/RuwqN0ft.png', 'Soley': 'https://i.imgur.com/8v0CfNBt.png'
         };
 
-        function getGender(name) {
-            return GENDER_MAP[name] || 'U'; // U = Unknown
-        }
+        // HELPERS
+        const getGender = (name) => GENDER_MAP[name] || 'U';
+        const getAvatar = (name) => AVATAR_MAP[name] || 'https://via.placeholder.com/80?text=?';
 
-        function getAvatar(name) {
-            return AVATAR_MAP[name] || '';
-        }
-
-        function findLowestByGender(candidates, gender) {
-            // Filtrar por género y encontrar el de menos votos (ya están ordenados de mayor a menor)
+        function findLowest(candidates, gender) {
             const filtered = candidates.filter(c => getGender(c.name) === gender);
-            return filtered.length > 0 ? filtered[filtered.length - 1].name : null;
+            if (filtered.length === 0) return [];
+            const minVotes = filtered[filtered.length - 1].votes;
+            return filtered.filter(c => c.votes === minVotes);
         }
 
+        // RENDERERS
+        function renderDangerCard(candidate) {
+            const percentage = candidate.percentage;
+            return `
+                <div class="danger-card">
+                    <img src="${getAvatar(candidate.name)}" alt="${candidate.name}" class="danger-avatar">
+                    <div class="danger-info">
+                        <h3>${candidate.name}</h3>
+                        <p>Posible Eliminación (${getGender(candidate.name) === 'M' ? 'H' : 'M'})</p>
+                    </div>
+                    <div class="danger-votes">
+                        <span class="count">${candidate.votes.toLocaleString()}</span>
+                        <span class="sub">${percentage}%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRow(candidate, index, maxVotes, isDanger) {
+            const barWidth = (candidate.votes / maxVotes) * 100;
+            const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+            const dangerClass = isDanger ? 'row-danger' : '';
+
+            return `
+                <div class="row-card ${dangerClass} ${rankClass}">
+                    <div class="rank-badge ${rankClass}">${index + 1}</div>
+                    <img src="${getAvatar(candidate.name)}" class="avatar-sm" loading="lazy">
+                    <div class="row-content">
+                        <div class="name">
+                            ${candidate.name} 
+                            ${isDanger ? '<span style="font-size:0.7em; color:var(--danger); margin-left:4px;">⚠️</span>' : ''}
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" style="width: ${barWidth}%"></div>
+                        </div>
+                    </div>
+                    <div class="row-stats">
+                        <div class="row-votes">${candidate.votes.toLocaleString()}</div>
+                        <div class="row-percent">${candidate.percentage}%</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // MAIN LOGIC
         async function fetchData() {
-            const statusEl = document.getElementById('status');
-            const loaderEl = document.getElementById('loader');
-            const resultsEl = document.getElementById('results');
-            const statsEl = document.getElementById('stats');
-
             try {
-                const cacheBuster = Date.now();
-                const targetWithCache = TARGET_URL + '?_=' + cacheBuster;
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetWithCache);
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(TARGET_URL + '?_=' + Date.now());
+                const response = await fetch(proxyUrl, { cache: 'no-store' });
+                const json = await response.json();
 
-                const response = await fetch(proxyUrl, {
-                    cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
-
-                const jsonReal = await response.json();
-                const visualDataArray = jsonReal.payload.settings.results.visual_data;
-                const currentData = visualDataArray[0];
-
+                // Process Data
+                const rawData = json.payload.settings.results.visual_data[0];
                 let candidates = [];
-                for (const [key, value] of Object.entries(currentData)) {
-                    if (key !== 'round') {
-                        candidates.push({ name: key, votes: value });
-                    }
+                for (const [key, value] of Object.entries(rawData)) {
+                    if (key !== 'round') candidates.push({ name: key, votes: value });
                 }
                 candidates.sort((a, b) => b.votes - a.votes);
-
-                // Encontrar el hombre y mujer con menos votos
-                const lowestMale = findLowestByGender(candidates, 'M');
-                const lowestFemale = findLowestByGender(candidates, 'F');
 
                 const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
                 const maxVotes = candidates[0]?.votes || 1;
 
-                document.getElementById('totalVotes').textContent = totalVotes.toLocaleString('es-CO');
+                // Add percentage prop
+                candidates = candidates.map(c => ({
+                    ...c,
+                    percentage: ((c.votes / totalVotes) * 100).toFixed(1)
+                }));
+
+                // Identify lowest
+                const lowestMales = findLowest(candidates, 'M');
+                const lowestFemales = findLowest(candidates, 'F');
+                const dangerNames = [...lowestMales, ...lowestFemales].map(c => c.name);
+
+                // Update DOM
+                document.getElementById('totalVotes').textContent = totalVotes.toLocaleString();
                 document.getElementById('totalCandidates').textContent = candidates.length;
-                statsEl.classList.remove('hidden');
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
 
-                resultsEl.innerHTML = '';
-
-                candidates.forEach((cand, index) => {
-                    const percentage = ((cand.votes / totalVotes) * 100).toFixed(1);
-                    const barWidth = (cand.votes / maxVotes) * 100;
-
-                    let topClass = '';
-                    let rankClass = 'normal';
-                    let progressClass = '';
-                    let isDanger = false;
-                    let dangerLabel = '';
-
-                    // Verificar si está en zona de peligro
-                    if (cand.name === lowestMale) {
-                        isDanger = true;
-                        dangerLabel = '<span class="danger-label">En Peligro</span>';
-                    } else if (cand.name === lowestFemale) {
-                        isDanger = true;
-                        dangerLabel = '<span class="danger-label">En Peligro</span>';
-                    }
-
-                    // Solo aplicar estilos de top si no está en peligro
-                    if (!isDanger) {
-                        if (index === 0) { topClass = 'top1'; rankClass = 'gold'; progressClass = 'top1'; }
-                        else if (index === 1) { topClass = 'top2'; rankClass = 'silver'; progressClass = 'top2'; }
-                        else if (index === 2) { topClass = 'top3'; rankClass = 'bronze'; progressClass = 'top3'; }
-                    }
-
-                    const row = document.createElement('div');
-                    row.className = `result-row ${topClass} ${isDanger ? 'danger-zone' : ''}`;
-                    const avatarUrl = getAvatar(cand.name);
-                    const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" alt="${cand.name}" class="candidate-avatar" loading="lazy">` : '';
-
-                    row.innerHTML = `
-                        <div class="rank ${rankClass}">${index + 1}</div>
-                        <div class="candidate-info">
-                            <div class="candidate-header">
-                                ${avatarHtml}
-                                <span class="candidate-name">${cand.name}${dangerLabel}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${progressClass}" style="width: ${barWidth}%"></div>
-                            </div>
-                        </div>
-                        <div class="votes-section">
-                            <div class="votes-count">${cand.votes.toLocaleString('es-CO')}</div>
-                            <div class="percentage">${percentage}%</div>
-                        </div>
-                    `;
-                    resultsEl.appendChild(row);
+                // 1. Render Danger Zone (Top of page)
+                const dangerGrid = document.getElementById('danger-grid');
+                dangerGrid.innerHTML = '';
+                [...lowestFemales, ...lowestMales].forEach(c => {
+                    dangerGrid.innerHTML += renderDangerCard(c);
                 });
 
-                const now = new Date();
-                statusEl.textContent = `Actualizado: ${now.toLocaleTimeString('es-CO')}`;
-                loaderEl.classList.add('hidden');
-                resultsEl.classList.remove('hidden');
+                // 2. Render Leaderboard (Bottom of page)
+                const leaderboard = document.getElementById('leaderboard');
+                leaderboard.innerHTML = '';
+                candidates.forEach((c, i) => {
+                    leaderboard.innerHTML += renderRow(c, i, maxVotes, dangerNames.includes(c.name));
+                });
+
+                // Visibility
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('stats').classList.remove('hidden');
+                document.getElementById('danger-area').classList.remove('hidden');
+                document.getElementById('main-list-area').classList.remove('hidden');
 
             } catch (error) {
-                console.error(error);
-                statusEl.textContent = "Error al cargar. Reintentando...";
+                console.error("Error fetching", error);
             }
         }
 
+        // TIMER LOGIC
         let lastFetchMinute = -1;
-
-        // Timer cada 5 minutos (:00, :05, :10, :15, etc.)
-        function getSecondsUntilNextUpdate() {
+        function updateTimer() {
             const now = new Date();
-            const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
+            const min = now.getMinutes();
+            const sec = now.getSeconds();
 
-            const remainder = minutes % 5;
-            const minutesUntilNext = remainder === 0 ? 0 : 5 - remainder;
-
-            if (minutesUntilNext === 0) {
-                if (seconds <= 3) return 0;
-                return (5 * 60) - seconds;
+            // Fetch logic (every 5 mins)
+            if (min % 5 === 0 && lastFetchMinute !== min) {
+                lastFetchMinute = min;
+                fetchData();
             }
 
-            return (minutesUntilNext * 60) - seconds;
+            // Countdown display
+            const remMin = 4 - (min % 5);
+            const remSec = 59 - sec;
+            const display = `${remMin}:${remSec.toString().padStart(2, '0')}`;
+            document.getElementById('countdown').textContent = display;
         }
 
-        function formatTime(totalSeconds) {
-            if (totalSeconds <= 0) return "00:00";
-            const minutes = Math.floor(totalSeconds / 60);
-            const seconds = totalSeconds % 60;
-            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        function checkAndFetch() {
-            const now = new Date();
-            const currentMinute = now.getMinutes();
-
-            // Cada 5 minutos
-            if (currentMinute % 5 === 0 && lastFetchMinute !== currentMinute) {
-                lastFetchMinute = currentMinute;
-                setTimeout(fetchData, 2000);
-            }
-        }
-
-        function updateCountdown() {
-            const countdownEl = document.getElementById('countdown');
-            const secondsLeft = getSecondsUntilNextUpdate();
-            countdownEl.textContent = formatTime(secondsLeft);
-
-            if (secondsLeft <= 5) {
-                countdownEl.classList.add('updating');
-            } else {
-                countdownEl.classList.remove('updating');
-            }
-
-            checkAndFetch();
-        }
-
+        // INIT
         fetchData();
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-        setInterval(fetchData, 15000);
+        setInterval(updateTimer, 1000);
+
     </script>
 </body>
 
