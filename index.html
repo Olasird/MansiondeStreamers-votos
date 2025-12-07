@@ -795,7 +795,7 @@
             'Cami Pulgarin': 'F',
             'Natalia Es mejor': 'F',
             'Andyysuz': 'F',
-            'La Piquiña': 'M',
+            'La Piquiña': 'F',
             'Karen Orozco': 'F',
             'Soley': 'F',
             'Emikukis': 'F',
@@ -856,15 +856,42 @@
             const resultsEl = document.getElementById('results');
             const statsEl = document.getElementById('stats');
 
+            // Lista de proxies CORS (fallback si uno falla)
+            const CORS_PROXIES = [
+                (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+            ];
+
             try {
                 const cacheBuster = Date.now();
                 const targetWithCache = TARGET_URL + '?_=' + cacheBuster;
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetWithCache);
 
-                const response = await fetch(proxyUrl, {
-                    cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
+                let response = null;
+                let lastError = null;
+
+                // Intentar con cada proxy hasta que uno funcione
+                for (const proxyFn of CORS_PROXIES) {
+                    try {
+                        const proxyUrl = proxyFn(targetWithCache);
+                        response = await fetch(proxyUrl, {
+                            cache: 'no-store',
+                            headers: { 'Cache-Control': 'no-cache' }
+                        });
+
+                        if (response.ok) {
+                            break; // Éxito, salir del loop
+                        }
+                        lastError = new Error(`HTTP ${response.status}`);
+                    } catch (e) {
+                        lastError = e;
+                    }
+                }
+
+                // Verificar si algún proxy funcionó
+                if (!response || !response.ok) {
+                    throw lastError || new Error('Todos los proxies fallaron');
+                }
 
                 const jsonReal = await response.json();
                 const visualDataArray = jsonReal.payload.settings.results.visual_data;
@@ -968,8 +995,12 @@
                 resultsEl.classList.remove('hidden');
 
             } catch (error) {
-                console.error(error);
-                statusEl.textContent = "Error al cargar. Reintentando...";
+                console.error('Error fetching data:', error.message);
+                // Solo mostrar error si no hay datos previos cargados
+                if (resultsEl.innerHTML === '') {
+                    statusEl.textContent = "Error al cargar. Esperando próxima actualización...";
+                }
+                // Si es rate limiting, no hacer nada más - esperar al próximo ciclo
             }
         }
 
@@ -1003,10 +1034,10 @@
             const now = new Date();
             const currentMinute = now.getMinutes();
 
-            // Cada 5 minutos
+            // Cada 5 minutos, esperar 10 segundos después del minuto exacto
             if (currentMinute % 5 === 0 && lastFetchMinute !== currentMinute) {
                 lastFetchMinute = currentMinute;
-                setTimeout(fetchData, 2000);
+                setTimeout(fetchData, 10000); // Esperar 10 segundos antes de pedir datos
             }
         }
 
@@ -1027,7 +1058,6 @@
         fetchData();
         updateCountdown();
         setInterval(updateCountdown, 1000);
-        setInterval(fetchData, 15000);
     </script>
 </body>
 
