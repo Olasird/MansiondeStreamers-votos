@@ -976,11 +976,143 @@
             return filtered.length > 0 ? filtered[0].name : null;
         }
 
+        // Función para renderizar resultados (usada tanto para caché como para datos frescos)
+        function renderResults(candidates, deduplication, isFromCache = false) {
+            const resultsEl = document.getElementById('results');
+            const statsEl = document.getElementById('stats');
+            const loaderEl = document.getElementById('loader');
+            const statusEl = document.getElementById('status');
+
+            // Actualizar banner de deduplicación
+            const bannerTitle = document.getElementById('bannerTitle');
+            const bannerText = document.getElementById('bannerText');
+
+            if (deduplication) {
+                bannerTitle.innerHTML = '🗳️ VOTOS ÚNICOS';
+                bannerText.innerHTML = 'La plataforma está mostrando <strong>votos únicos</strong>. Es decir, Cada persona solo puede votar <strong>una vez</strong>.';
+            } else {
+                bannerTitle.innerHTML = '🗳️ VOTOS REPETIDOS';
+                bannerText.innerHTML = 'La plataforma está mostrando <strong>votos repetidos</strong>. Es decir, una persona podría votar <strong>más de una vez</strong>.';
+            }
+
+            // Ordenar candidatos por votos (mayor a menor)
+            candidates.sort((a, b) => b.votes - a.votes);
+
+            // Encontrar candidatos en peligro según CONFIG
+            let dangerMale, dangerFemale;
+
+            if (CONFIG.SE_VAN_LOS_MAS_VOTADOS) {
+                dangerMale = findHighestByGender(candidates, 'M');
+                dangerFemale = findHighestByGender(candidates, 'F');
+            } else {
+                dangerMale = findLowestByGender(candidates, 'M');
+                dangerFemale = findLowestByGender(candidates, 'F');
+            }
+
+            // Actualizar danger spotlight
+            const maleData = candidates.find(c => c.name === dangerMale);
+            const femaleData = candidates.find(c => c.name === dangerFemale);
+
+            if (maleData) {
+                document.getElementById('dangerMaleAvatar').src = getAvatar(maleData.name);
+                document.getElementById('dangerMaleAvatar').alt = maleData.name;
+                document.getElementById('dangerMaleName').textContent = maleData.name;
+                document.getElementById('dangerMaleVotes').textContent = maleData.votes.toLocaleString('es-CO');
+            }
+
+            if (femaleData) {
+                document.getElementById('dangerFemaleAvatar').src = getAvatar(femaleData.name);
+                document.getElementById('dangerFemaleAvatar').alt = femaleData.name;
+                document.getElementById('dangerFemaleName').textContent = femaleData.name;
+                document.getElementById('dangerFemaleVotes').textContent = femaleData.votes.toLocaleString('es-CO');
+            }
+
+            document.getElementById('dangerSpotlight').classList.add('visible');
+
+            // Calcular totales
+            const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
+            const maxVotes = candidates[0]?.votes || 1;
+
+            document.getElementById('totalVotes').textContent = totalVotes.toLocaleString('es-CO');
+            document.getElementById('totalCandidates').textContent = candidates.length;
+            statsEl.classList.remove('hidden');
+
+            // Renderizar lista de candidatos
+            resultsEl.innerHTML = '';
+
+            candidates.forEach((cand, index) => {
+                const percentage = ((cand.votes / totalVotes) * 100).toFixed(1);
+                const barWidth = (cand.votes / maxVotes) * 100;
+
+                let topClass = '';
+                let rankClass = 'normal';
+                let progressClass = '';
+                let isDanger = false;
+                let dangerLabel = '';
+
+                if (cand.name === dangerMale || cand.name === dangerFemale) {
+                    isDanger = true;
+                    dangerLabel = '<span class="danger-label">En Peligro</span>';
+                }
+
+                if (!isDanger) {
+                    if (index === 0) { topClass = 'top1'; rankClass = 'gold'; progressClass = 'top1'; }
+                    else if (index === 1) { topClass = 'top2'; rankClass = 'silver'; progressClass = 'top2'; }
+                    else if (index === 2) { topClass = 'top3'; rankClass = 'bronze'; progressClass = 'top3'; }
+                }
+
+                const row = document.createElement('div');
+                row.className = `result-row ${topClass} ${isDanger ? 'danger-zone' : ''}`;
+                const avatarUrl = getAvatar(cand.name);
+                const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" alt="${cand.name}" class="candidate-avatar" loading="lazy">` : '';
+
+                row.innerHTML = `
+                    <div class="rank ${rankClass}">${index + 1}</div>
+                    <div class="candidate-info">
+                        <div class="candidate-header">
+                            ${avatarHtml}
+                            <span class="candidate-name">${cand.name}${dangerLabel}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill ${progressClass}" style="width: ${barWidth}%"></div>
+                        </div>
+                    </div>
+                    <div class="votes-section">
+                        <div class="votes-count">${cand.votes.toLocaleString('es-CO')}</div>
+                        <div class="percentage">${percentage}%</div>
+                    </div>
+                `;
+                resultsEl.appendChild(row);
+            });
+
+            // Actualizar estado
+            loaderEl.classList.add('hidden');
+            resultsEl.classList.remove('hidden');
+
+            if (isFromCache) {
+                statusEl.textContent = 'Mostrando caché, actualizando...';
+            } else {
+                const now = new Date();
+                statusEl.textContent = `Actualizado: ${now.toLocaleTimeString('es-CO')}`;
+            }
+        }
+
         async function fetchData() {
             const statusEl = document.getElementById('status');
             const loaderEl = document.getElementById('loader');
             const resultsEl = document.getElementById('results');
             const statsEl = document.getElementById('stats');
+
+            // PASO 1: Mostrar datos cacheados INMEDIATAMENTE mientras carga
+            const cachedData = localStorage.getItem('votosCache');
+            if (cachedData) {
+                try {
+                    const cached = JSON.parse(cachedData);
+                    if (cached.data && cached.data.length > 0) {
+                        renderResults(cached.data, cached.deduplication, true);
+                    }
+                } catch (e) { /* caché corrupto, ignorar */ }
+            }
 
             // Lista de proxies CORS (fallback si uno falla)
             const CORS_PROXIES = [
@@ -989,6 +1121,24 @@
                 (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
             ];
 
+            // Función para fetch con timeout
+            const fetchWithTimeout = async (url, timeout = 5000) => {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+                try {
+                    const response = await fetch(url, {
+                        cache: 'no-store',
+                        headers: { 'Cache-Control': 'no-cache' },
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                    return response;
+                } catch (e) {
+                    clearTimeout(timeoutId);
+                    throw e;
+                }
+            };
+
             try {
                 const cacheBuster = Date.now();
                 const targetWithCache = TARGET_URL + '?_=' + cacheBuster;
@@ -996,14 +1146,11 @@
                 let response = null;
                 let lastError = null;
 
-                // Intentar con cada proxy hasta que uno funcione
+                // Intentar con cada proxy hasta que uno funcione (timeout 5s por proxy)
                 for (const proxyFn of CORS_PROXIES) {
                     try {
                         const proxyUrl = proxyFn(targetWithCache);
-                        response = await fetch(proxyUrl, {
-                            cache: 'no-store',
-                            headers: { 'Cache-Control': 'no-cache' }
-                        });
+                        response = await fetchWithTimeout(proxyUrl, 5000);
 
                         if (response.ok) {
                             break; // Éxito, salir del loop
@@ -1024,19 +1171,6 @@
                 // Extraer configuración de la API
                 const settings = jsonReal.payload.settings;
                 const voterDeduplication = settings.voter_deduplication;
-                const electionName = settings.election_name || `Día ${CONFIG.DIA}`;
-
-                // Actualizar el banner con información de deduplicación
-                const bannerTitle = document.getElementById('bannerTitle');
-                const bannerText = document.getElementById('bannerText');
-
-                if (voterDeduplication) {
-                    bannerTitle.innerHTML = '🗳️ VOTOS ÚNICOS';
-                    bannerText.innerHTML = 'La plataforma está mostrando <strong>votos únicos</strong>. Es decir, Cada persona solo puede votar <strong>una vez</strong>.';
-                } else {
-                    bannerTitle.innerHTML = '🗳️ VOTOS REPETIDOS';
-                    bannerText.innerHTML = 'La plataforma está mostrando <strong>votos repetidos</strong>. Es decir, una persona podría votar <strong>más de una vez</strong>.';
-                }
 
                 // Verificar si hay resultados disponibles
                 if (!settings.results || !settings.results.visual_data) {
@@ -1052,119 +1186,18 @@
                         candidates.push({ name: key, votes: value });
                     }
                 }
-                candidates.sort((a, b) => b.votes - a.votes);
 
-                // DEBUG: Ver nombres exactos y géneros
-                console.log('=== DEBUG: Candidatos desde API ===');
-                candidates.forEach(c => {
-                    const gender = getGender(c.name);
-                    console.log(`"${c.name}" -> Género: ${gender} (${c.votes} votos)`);
-                    if (gender === 'U') {
-                        console.warn(`⚠️ NOMBRE NO ENCONTRADO EN GENDER_MAP: "${c.name}"`);
-                    }
-                });
+                // PASO 2: Renderizar datos frescos
+                renderResults(candidates, voterDeduplication, false);
 
-                // Encontrar candidatos en peligro según CONFIG
-                let dangerMale, dangerFemale;
-
-                if (CONFIG.SE_VAN_LOS_MAS_VOTADOS) {
-                    // Se van los MÁS votados (primero en la lista ordenada)
-                    dangerMale = findHighestByGender(candidates, 'M');
-                    dangerFemale = findHighestByGender(candidates, 'F');
-                } else {
-                    // Se van los MENOS votados (último en la lista ordenada)
-                    dangerMale = findLowestByGender(candidates, 'M');
-                    dangerFemale = findLowestByGender(candidates, 'F');
-                }
-
-                console.log(`🔴 Hombre en peligro: "${dangerMale}"`);
-                console.log(`🔴 Mujer en peligro: "${dangerFemale}"`);
-                console.log('=================================');
-
-                // Actualizar la sección de danger spotlight
-                const maleData = candidates.find(c => c.name === dangerMale);
-                const femaleData = candidates.find(c => c.name === dangerFemale);
-
-                if (maleData) {
-                    document.getElementById('dangerMaleAvatar').src = getAvatar(maleData.name);
-                    document.getElementById('dangerMaleAvatar').alt = maleData.name;
-                    document.getElementById('dangerMaleName').textContent = maleData.name;
-                    document.getElementById('dangerMaleVotes').textContent = maleData.votes.toLocaleString('es-CO');
-                }
-
-                if (femaleData) {
-                    document.getElementById('dangerFemaleAvatar').src = getAvatar(femaleData.name);
-                    document.getElementById('dangerFemaleAvatar').alt = femaleData.name;
-                    document.getElementById('dangerFemaleName').textContent = femaleData.name;
-                    document.getElementById('dangerFemaleVotes').textContent = femaleData.votes.toLocaleString('es-CO');
-                }
-
-                // Mostrar la sección
-                document.getElementById('dangerSpotlight').classList.add('visible');
-
-                const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
-                const maxVotes = candidates[0]?.votes || 1;
-
-                document.getElementById('totalVotes').textContent = totalVotes.toLocaleString('es-CO');
-                document.getElementById('totalCandidates').textContent = candidates.length;
-                statsEl.classList.remove('hidden');
-
-                resultsEl.innerHTML = '';
-
-                candidates.forEach((cand, index) => {
-                    const percentage = ((cand.votes / totalVotes) * 100).toFixed(1);
-                    const barWidth = (cand.votes / maxVotes) * 100;
-
-                    let topClass = '';
-                    let rankClass = 'normal';
-                    let progressClass = '';
-                    let isDanger = false;
-                    let dangerLabel = '';
-
-                    // Verificar si está en zona de peligro
-                    if (cand.name === dangerMale) {
-                        isDanger = true;
-                        dangerLabel = '<span class="danger-label">En Peligro</span>';
-                    } else if (cand.name === dangerFemale) {
-                        isDanger = true;
-                        dangerLabel = '<span class="danger-label">En Peligro</span>';
-                    }
-
-                    // Solo aplicar estilos de top si no está en peligro
-                    if (!isDanger) {
-                        if (index === 0) { topClass = 'top1'; rankClass = 'gold'; progressClass = 'top1'; }
-                        else if (index === 1) { topClass = 'top2'; rankClass = 'silver'; progressClass = 'top2'; }
-                        else if (index === 2) { topClass = 'top3'; rankClass = 'bronze'; progressClass = 'top3'; }
-                    }
-
-                    const row = document.createElement('div');
-                    row.className = `result-row ${topClass} ${isDanger ? 'danger-zone' : ''}`;
-                    const avatarUrl = getAvatar(cand.name);
-                    const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" alt="${cand.name}" class="candidate-avatar" loading="lazy">` : '';
-
-                    row.innerHTML = `
-                        <div class="rank ${rankClass}">${index + 1}</div>
-                        <div class="candidate-info">
-                            <div class="candidate-header">
-                                ${avatarHtml}
-                                <span class="candidate-name">${cand.name}${dangerLabel}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${progressClass}" style="width: ${barWidth}%"></div>
-                            </div>
-                        </div>
-                        <div class="votes-section">
-                            <div class="votes-count">${cand.votes.toLocaleString('es-CO')}</div>
-                            <div class="percentage">${percentage}%</div>
-                        </div>
-                    `;
-                    resultsEl.appendChild(row);
-                });
-
-                const now = new Date();
-                statusEl.textContent = `Actualizado: ${now.toLocaleTimeString('es-CO')}`;
-                loaderEl.classList.add('hidden');
-                resultsEl.classList.remove('hidden');
+                // Guardar en caché para carga instantánea la próxima vez
+                try {
+                    localStorage.setItem('votosCache', JSON.stringify({
+                        data: candidates,
+                        deduplication: voterDeduplication,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) { /* localStorage lleno o no disponible */ }
 
             } catch (error) {
                 console.error('Error fetching data:', error.message);
