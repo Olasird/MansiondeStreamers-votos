@@ -871,19 +871,24 @@
     </div>
 
     <script>
-      
+        // ============================================
+        // ⚙️ CONFIGURACIÓN - CAMBIA ESTOS VALORES ⚙️
+        // ============================================
         const CONFIG = {
-           
+            // Número del día (cambia solo este número cada día)
             DIA: 6,
-            
-            TITULO_DIA: "Eliminaciones Día 6",
-           
-            ELIMINADOS_HOMBRES: 1,          
-            ELIMINADOS_MUJERES: 1,         
-            SE_VAN_LOS_MAS_VOTADOS: false,  
-        };
-        
 
+            // Título del encabezado
+            TITULO_DIA: "Eliminaciones Día 6",
+
+            // Reglas de eliminación
+            ELIMINADOS_HOMBRES: 1,          // Cantidad de hombres que se van
+            ELIMINADOS_MUJERES: 1,          // Cantidad de mujeres que se van
+            SE_VAN_LOS_MAS_VOTADOS: false,  // true = se van los MÁS votados, false = los MENOS votados
+        };
+        // ============================================
+
+        // URLs generadas automáticamente (NO TOCAR)
         const TARGET_URL = `https://app.rankedvote.co/api/settings/rv/lamansiondia${CONFIG.DIA}`;
         const VOTE_URL = `https://app.rankedvote.co/rv/lamansiondia${CONFIG.DIA}/vote`;
 
@@ -908,7 +913,7 @@
             'Edits De Mierda': 'M',
             'El Domi': 'M',
             'Male': 'F',
-            'Soy Frezo': 'M',
+            'SoyFrezo': 'M',
             'KingLuiz': 'M',
             'Pesque': 'M'
         };
@@ -921,7 +926,7 @@
             'Juanda': 'https://i.imgur.com/h6rIkXEs.png',
             'La Piquiña': 'https://i.imgur.com/RrVhcUZs.png',
             'KingLuiz': 'https://i.imgur.com/qQOy7Cms.png',
-            'Soy Frezo': 'https://i.imgur.com/JvQNhAUs.png',
+            'SoyFrezo': 'https://i.imgur.com/JvQNhAUs.png',
             'El Agropecuario': 'https://i.imgur.com/NncLW7Es.png',
             'El Domi': 'https://i.imgur.com/yon3rMZs.png',
             'Ness': 'https://i.imgur.com/3UZmzBls.png',
@@ -938,11 +943,25 @@
         };
 
         function getGender(name) {
-            return GENDER_MAP[name] || 'U'; // U = Unknown
+            // Búsqueda case-insensitive
+            const nameLower = name.toLowerCase();
+            for (const [key, value] of Object.entries(GENDER_MAP)) {
+                if (key.toLowerCase() === nameLower) {
+                    return value;
+                }
+            }
+            return 'U'; // U = Unknown
         }
 
         function getAvatar(name) {
-            return AVATAR_MAP[name] || '';
+            // Búsqueda case-insensitive
+            const nameLower = name.toLowerCase();
+            for (const [key, value] of Object.entries(AVATAR_MAP)) {
+                if (key.toLowerCase() === nameLower) {
+                    return value;
+                }
+            }
+            return '';
         }
 
         function findLowestByGender(candidates, gender) {
@@ -1035,6 +1054,16 @@
                 }
                 candidates.sort((a, b) => b.votes - a.votes);
 
+                // DEBUG: Ver nombres exactos y géneros
+                console.log('=== DEBUG: Candidatos desde API ===');
+                candidates.forEach(c => {
+                    const gender = getGender(c.name);
+                    console.log(`"${c.name}" -> Género: ${gender} (${c.votes} votos)`);
+                    if (gender === 'U') {
+                        console.warn(`⚠️ NOMBRE NO ENCONTRADO EN GENDER_MAP: "${c.name}"`);
+                    }
+                });
+
                 // Encontrar candidatos en peligro según CONFIG
                 let dangerMale, dangerFemale;
 
@@ -1047,6 +1076,10 @@
                     dangerMale = findLowestByGender(candidates, 'M');
                     dangerFemale = findLowestByGender(candidates, 'F');
                 }
+
+                console.log(`🔴 Hombre en peligro: "${dangerMale}"`);
+                console.log(`🔴 Mujer en peligro: "${dangerFemale}"`);
+                console.log('=================================');
 
                 // Actualizar la sección de danger spotlight
                 const maleData = candidates.find(c => c.name === dangerMale);
