@@ -456,18 +456,29 @@
             font-size: 0.8rem;
         }
 
-        /* Elimination Banner */
+        /* Elimination Banner - MODIFICADO */
         .elimination-banner {
+            /* Tus estilos originales de fondo y bordes */
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 16px;
             padding: 20px 24px;
             margin-bottom: 24px;
-            text-align: center;
             position: relative;
             overflow: hidden;
+
+            /* NUEVO: Flexbox para poner las columnas lado a lado */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            /* Centrado vertical */
+            gap: 24px;
+            /* Espacio entre el texto y la curiosidad */
+            text-align: center;
+            /* Mantiene el texto centrado */
         }
 
+        /* Animación de brillo (Intacta) */
         .elimination-banner::before {
             content: '';
             position: absolute;
@@ -477,6 +488,8 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
             animation: shimmer 3s infinite;
+            pointer-events: none;
+            /* Para que no interfiera con clicks */
         }
 
         @keyframes shimmer {
@@ -487,6 +500,16 @@
             100% {
                 left: 100%;
             }
+        }
+
+        /* --- COLUMNA IZQUIERDA (Texto Principal) --- */
+        .banner-main {
+            flex: 2;
+            /* Ocupa más espacio (aprox 66%) */
+            /* Aseguramos que el contenido se comporte bien */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .elimination-banner .banner-icon {
@@ -511,6 +534,73 @@
 
         .elimination-banner .banner-text strong {
             color: #fbbf24;
+        }
+
+        /* --- COLUMNA DERECHA (Curiosidades) --- */
+        .banner-side {
+            flex: 1;
+            /* Ocupa menos espacio (aprox 33%) */
+            /* La línea divisoria usando TUS colores originales */
+            border-left: 1px solid rgba(239, 68, 68, 0.3);
+            padding-left: 24px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Estilos para el título de la curiosidad */
+        .curio-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fbbf24;
+            /* Usamos el amarillo de tus <strong> para combinar */
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .curio-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        /* Estilo de la imagen */
+        .curio-img {
+            width: 100%;
+            max-width: 140px;
+            /* Tamaño controlado */
+            border-radius: 8px;
+            /* Bordes redondeados */
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            /* Borde sutil rojo */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- VERSIÓN MÓVIL --- */
+        /* Si la pantalla es pequeña (celular), ponemos uno debajo del otro */
+        @media (max-width: 768px) {
+            .elimination-banner {
+                flex-direction: column;
+            }
+
+            .banner-main {
+                width: 100%;
+                padding-bottom: 20px;
+                /* Cambiamos la línea para que esté abajo en vez de al lado */
+                border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+            }
+
+            .banner-side {
+                width: 100%;
+                border-left: none;
+                /* Quitamos línea lateral */
+                padding-left: 0;
+                padding-top: 20px;
+            }
         }
 
         /* Danger Zone - Lowest votes highlight */
@@ -691,10 +781,10 @@
 
     <div class="container">
         <div class="header">
-            <div class="logo">Eliminaciones Día 4</div>
+            <div class="logo" id="headerDayTitle">Eliminaciones Día 6</div>
             <h1>La Mansión de los Streamers</h1>
             <p class="subtitle">Votación en tiempo real</p>
-            <a href="https://app.rankedvote.co/rv/lamansiondia4/vote" target="_blank" class="vote-btn">
+            <a href="#" id="voteBtn" target="_blank" class="vote-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -717,14 +807,11 @@
             </div>
         </div>
 
-        <!-- Elimination Banner -->
-        <div class="elimination-banner">
-            <div class="banner-icon">🔥</div>
-            <div class="banner-title">¡Día de Salvación!</div>
-            <div class="banner-text">
-                Hoy votas para <strong>SALVAR</strong> a tu streamer favorito.<br>
-                El <strong>hombre</strong> y la <strong>mujer</strong> con menos votos quedarán
-                <strong>eliminados</strong>.
+        <!-- Banner dinámico - se llena desde JavaScript -->
+        <div class="elimination-banner" id="infoBanner">
+            <div class="banner-main">
+                <div class="banner-title" id="bannerTitle">Cargando información...</div>
+                <div class="banner-text" id="bannerText"></div>
             </div>
         </div>
 
@@ -784,7 +871,26 @@
     </div>
 
     <script>
-        const TARGET_URL = 'https://app.rankedvote.co/api/settings/rv/lamansiondia4';
+        // ============================================
+        // ⚙️ CONFIGURACIÓN - CAMBIA ESTOS VALORES ⚙️
+        // ============================================
+        const CONFIG = {
+            // Número del día (cambia solo este número cada día)
+            DIA: 6,
+
+            // Título del encabezado
+            TITULO_DIA: "Eliminaciones Día 6",
+
+            // Reglas de eliminación
+            ELIMINADOS_HOMBRES: 1,          // Cantidad de hombres que se van
+            ELIMINADOS_MUJERES: 1,          // Cantidad de mujeres que se van
+            SE_VAN_LOS_MAS_VOTADOS: false,  // true = se van los MÁS votados, false = los MENOS votados
+        };
+        // ============================================
+
+        // URLs generadas automáticamente (NO TOCAR)
+        const TARGET_URL = `https://app.rankedvote.co/api/settings/rv/lamansiondia${CONFIG.DIA}`;
+        const VOTE_URL = `https://app.rankedvote.co/rv/lamansiondia${CONFIG.DIA}/vote`;
 
         // Mapeo de género de los participantes
         const GENDER_MAP = {
@@ -812,28 +918,28 @@
             'Pesque': 'M'
         };
 
-        // Mapeo de avatares (usando thumbnails de Imgur con sufijo 't' para optimizar ~10kb c/u)
+
         const AVATAR_MAP = {
-            'Ismael Sanchez': 'https://i.imgur.com/UaGpHqAt.png',
-            'Pesque': 'https://i.imgur.com/RdSDKsRt.png',
-            'Edits De Mierda': 'https://i.imgur.com/Us5nUSJt.png',
-            'Juanda': 'https://i.imgur.com/h6rIkXEt.png',
-            'La Piquiña': 'https://i.imgur.com/RrVhcUZt.png',
-            'KingLuiz': 'https://i.imgur.com/qQOy7Cmt.png',
-            'Soy Frezo': 'https://i.imgur.com/JvQNhAUt.png',
-            'El Agropecuario': 'https://i.imgur.com/NncLW7Et.png',
-            'El Domi': 'https://i.imgur.com/yon3rMZt.png',
-            'Ness': 'https://i.imgur.com/3UZmzBlt.png',
-            'Natalia Es mejor': 'https://i.imgur.com/1W1NH2dt.png',
-            'El Cone': 'https://i.imgur.com/uJlFcL3t.png',
-            'Andyysuz': 'https://i.imgur.com/fbiaXogt.png',
-            'Emikukis': 'https://i.imgur.com/eVRMQl0t.png',
-            'May Osorio': 'https://i.imgur.com/vyNXVNVt.png',
-            'Karen Orozco': 'https://i.imgur.com/b8SNllXt.png',
-            'Alejandra Buitrago': 'https://i.imgur.com/3WF7giat.png',
-            'Cami Pulgarin': 'https://i.imgur.com/4JOgnRjt.png',
-            'Male': 'https://i.imgur.com/RuwqN0ft.png',
-            'Soley': 'https://i.imgur.com/8v0CfNBt.png'
+            'Ismael Sanchez': 'https://i.imgur.com/UaGpHqAs.png',
+            'Pesque': 'https://i.imgur.com/RdSDKsRs.png',
+            'Edits De Mierda': 'https://i.imgur.com/Us5nUSJs.png',
+            'Juanda': 'https://i.imgur.com/h6rIkXEs.png',
+            'La Piquiña': 'https://i.imgur.com/RrVhcUZs.png',
+            'KingLuiz': 'https://i.imgur.com/qQOy7Cms.png',
+            'Soy Frezo': 'https://i.imgur.com/JvQNhAUs.png',
+            'El Agropecuario': 'https://i.imgur.com/NncLW7Es.png',
+            'El Domi': 'https://i.imgur.com/yon3rMZs.png',
+            'Ness': 'https://i.imgur.com/3UZmzBls.png',
+            'Natalia Es mejor': 'https://i.imgur.com/1W1NH2ds.png',
+            'El Cone': 'https://i.imgur.com/uJlFcL3s.png',
+            'Andyysuz': 'https://i.imgur.com/fbiaXogs.png',
+            'Emikukis': 'https://i.imgur.com/eVRMQl0s.png',
+            'May Osorio': 'https://i.imgur.com/vyNXVNVs.png',
+            'Karen Orozco': 'https://i.imgur.com/b8SNllXs.png',
+            'Alejandra Buitrago': 'https://i.imgur.com/3WF7gias.png',
+            'Cami Pulgarin': 'https://i.imgur.com/4JOgnRjs.png',
+            'Male': 'https://i.imgur.com/RuwqN0fs.png',
+            'Soley': 'https://i.imgur.com/8v0CfNBs.png'
         };
 
         function getGender(name) {
@@ -848,6 +954,12 @@
             // Filtrar por género y encontrar el de menos votos (ya están ordenados de mayor a menor)
             const filtered = candidates.filter(c => getGender(c.name) === gender);
             return filtered.length > 0 ? filtered[filtered.length - 1].name : null;
+        }
+
+        function findHighestByGender(candidates, gender) {
+            // Filtrar por género y encontrar el de más votos (primero de la lista ordenada)
+            const filtered = candidates.filter(c => getGender(c.name) === gender);
+            return filtered.length > 0 ? filtered[0].name : null;
         }
 
         async function fetchData() {
@@ -894,7 +1006,30 @@
                 }
 
                 const jsonReal = await response.json();
-                const visualDataArray = jsonReal.payload.settings.results.visual_data;
+
+                // Extraer configuración de la API
+                const settings = jsonReal.payload.settings;
+                const voterDeduplication = settings.voter_deduplication;
+                const electionName = settings.election_name || `Día ${CONFIG.DIA}`;
+
+                // Actualizar el banner con información de deduplicación
+                const bannerTitle = document.getElementById('bannerTitle');
+                const bannerText = document.getElementById('bannerText');
+
+                if (voterDeduplication) {
+                    bannerTitle.innerHTML = '🗳️ VOTOS ÚNICOS';
+                    bannerText.innerHTML = 'La plataforma está mostrando <strong>votos únicos</strong>. Es decir, Cada persona solo puede votar <strong>una vez</strong>.';
+                } else {
+                    bannerTitle.innerHTML = '🗳️ VOTOS REPETIDOS';
+                    bannerText.innerHTML = 'La plataforma está mostrando <strong>votos repetidos</strong>. Es decir, una persona podría votar <strong>más de una vez</strong>.';
+                }
+
+                // Verificar si hay resultados disponibles
+                if (!settings.results || !settings.results.visual_data) {
+                    throw new Error('Resultados no disponibles aún');
+                }
+
+                const visualDataArray = settings.results.visual_data;
                 const currentData = visualDataArray[0];
 
                 let candidates = [];
@@ -905,13 +1040,22 @@
                 }
                 candidates.sort((a, b) => b.votes - a.votes);
 
-                // Encontrar el hombre y mujer con menos votos
-                const lowestMale = findLowestByGender(candidates, 'M');
-                const lowestFemale = findLowestByGender(candidates, 'F');
+                // Encontrar candidatos en peligro según CONFIG
+                let dangerMale, dangerFemale;
+
+                if (CONFIG.SE_VAN_LOS_MAS_VOTADOS) {
+                    // Se van los MÁS votados (primero en la lista ordenada)
+                    dangerMale = findHighestByGender(candidates, 'M');
+                    dangerFemale = findHighestByGender(candidates, 'F');
+                } else {
+                    // Se van los MENOS votados (último en la lista ordenada)
+                    dangerMale = findLowestByGender(candidates, 'M');
+                    dangerFemale = findLowestByGender(candidates, 'F');
+                }
 
                 // Actualizar la sección de danger spotlight
-                const maleData = candidates.find(c => c.name === lowestMale);
-                const femaleData = candidates.find(c => c.name === lowestFemale);
+                const maleData = candidates.find(c => c.name === dangerMale);
+                const femaleData = candidates.find(c => c.name === dangerFemale);
 
                 if (maleData) {
                     document.getElementById('dangerMaleAvatar').src = getAvatar(maleData.name);
@@ -950,10 +1094,10 @@
                     let dangerLabel = '';
 
                     // Verificar si está en zona de peligro
-                    if (cand.name === lowestMale) {
+                    if (cand.name === dangerMale) {
                         isDanger = true;
                         dangerLabel = '<span class="danger-label">En Peligro</span>';
-                    } else if (cand.name === lowestFemale) {
+                    } else if (cand.name === dangerFemale) {
                         isDanger = true;
                         dangerLabel = '<span class="danger-label">En Peligro</span>';
                     }
@@ -1037,7 +1181,7 @@
             // Cada 5 minutos, esperar 10 segundos después del minuto exacto
             if (currentMinute % 5 === 0 && lastFetchMinute !== currentMinute) {
                 lastFetchMinute = currentMinute;
-                setTimeout(fetchData, 10000); // Esperar 10 segundos antes de pedir datos
+                setTimeout(fetchData, 5000); // Esperar 5 segundos antes de pedir datos
             }
         }
 
@@ -1055,6 +1199,13 @@
             checkAndFetch();
         }
 
+        // Inicializar elementos dinámicos con CONFIG
+        function initializeConfig() {
+            document.getElementById('headerDayTitle').textContent = CONFIG.TITULO_DIA;
+            document.getElementById('voteBtn').href = VOTE_URL;
+        }
+
+        initializeConfig();
         fetchData();
         updateCountdown();
         setInterval(updateCountdown, 1000);
