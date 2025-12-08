@@ -871,28 +871,19 @@
     </div>
 
     <script>
-        // ============================================
-        // ⚙️ CONFIGURACIÓN - CAMBIA ESTOS VALORES ⚙️
-        // ============================================
+        
         const CONFIG = {
-            // Número del día (cambia solo este número cada día)
             DIA: 6,
-
-            // Título del encabezado
             TITULO_DIA: "Eliminaciones Día 6",
 
-            // Reglas de eliminación
-            ELIMINADOS_HOMBRES: 1,          // Cantidad de hombres que se van
-            ELIMINADOS_MUJERES: 1,          // Cantidad de mujeres que se van
-            SE_VAN_LOS_MAS_VOTADOS: false,  // true = se van los MÁS votados, false = los MENOS votados
+            ELIMINADOS_HOMBRES: 1,          
+            ELIMINADOS_MUJERES: 1,          
+            SE_VAN_LOS_MAS_VOTADOS: false,  
         };
-        // ============================================
-
-        // URLs generadas automáticamente (NO TOCAR)
+       
         const TARGET_URL = `https://app.rankedvote.co/api/settings/rv/lamansiondia${CONFIG.DIA}`;
         const VOTE_URL = `https://app.rankedvote.co/rv/lamansiondia${CONFIG.DIA}/vote`;
 
-        // Mapeo de género de los participantes
         const GENDER_MAP = {
             // Mujeres
             'May Osorio': 'F',
@@ -965,18 +956,15 @@
         }
 
         function findLowestByGender(candidates, gender) {
-            // Filtrar por género y encontrar el de menos votos (ya están ordenados de mayor a menor)
             const filtered = candidates.filter(c => getGender(c.name) === gender);
             return filtered.length > 0 ? filtered[filtered.length - 1].name : null;
         }
 
         function findHighestByGender(candidates, gender) {
-            // Filtrar por género y encontrar el de más votos (primero de la lista ordenada)
             const filtered = candidates.filter(c => getGender(c.name) === gender);
             return filtered.length > 0 ? filtered[0].name : null;
         }
 
-        // Función para renderizar resultados (usada tanto para caché como para datos frescos)
         function renderResults(candidates, deduplication, isFromCache = false) {
             const resultsEl = document.getElementById('results');
             const statsEl = document.getElementById('stats');
