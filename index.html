@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMDLS - Votos</title>
+    <title>LMDLS Votos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
@@ -626,6 +626,10 @@
             display: block;
         }
 
+        .danger-spotlight.force-hidden {
+            display: none !important;
+        }
+
         .danger-spotlight-title {
             text-align: center;
             font-size: 0.85rem;
@@ -668,6 +672,7 @@
         .danger-box-header {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             margin-bottom: 12px;
             font-size: 0.75rem;
@@ -680,6 +685,7 @@
         .danger-box-list {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 10px;
         }
 
@@ -687,6 +693,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            width: 100%;
+        }
+
+        .danger-box-list.single-person .danger-person {
+            flex-direction: column;
+            text-align: center;
         }
 
         .danger-person-avatar {
@@ -698,9 +710,19 @@
             flex-shrink: 0;
         }
 
+        .danger-box-list.single-person .danger-person-avatar {
+            width: 60px;
+            height: 60px;
+            border-width: 3px;
+        }
+
         .danger-person-info {
             flex: 1;
             min-width: 0;
+        }
+
+        .danger-box-list.single-person .danger-person-info {
+            flex: none;
         }
 
         .danger-person-name {
@@ -718,6 +740,39 @@
             font-weight: 600;
         }
 
+        .warning-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .warning-banner.force-hidden {
+            display: none !important;
+        }
+
+        .warning-banner-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .warning-banner-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .warning-banner-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
         @media (max-width: 500px) {
             .danger-spotlight-grid {
                 grid-template-columns: 1fr 1fr;
@@ -731,6 +786,11 @@
             .danger-person-avatar {
                 width: 32px;
                 height: 32px;
+            }
+
+            .danger-box-list.single-person .danger-person-avatar {
+                width: 50px;
+                height: 50px;
             }
 
             .danger-person-name {
@@ -805,6 +865,15 @@
             </div>
         </div>
 
+        <div id="warningBanner" class="warning-banner">
+            <div class="warning-banner-icon">⚠️</div>
+            <div class="warning-banner-title">Recomendación</div>
+            <div class="warning-banner-text">
+                Te recomiendo <strong>NO VOTAR AÚN</strong> porque todavía no se han dado las indicaciones ni la
+                dinámica de votación. Espera a que se anuncie si se va el más votado o el menos votado.
+            </div>
+        </div>
+
         <div id="dangerSpotlight" class="danger-spotlight">
             <div class="danger-spotlight-title">
                 ⚠️ En zona de eliminación ⚠️
@@ -815,7 +884,7 @@
                     <div class="danger-box-list" id="dangerMalesList"></div>
                 </div>
                 <div class="danger-box" id="dangerFemalesBox">
-                    <div class="danger-box-header">Mujer</div>
+                    <div class="danger-box-header">Mujere</div>
                     <div class="danger-box-list" id="dangerFemalesList"></div>
                 </div>
             </div>
@@ -862,6 +931,12 @@
             ELIMINADOS_HOMBRES: 1,
             ELIMINADOS_MUJERES: 1,
             SE_VAN_LOS_MAS_VOTADOS: false,
+            // ============= CONFIGURACIÓN FÁCIL DE MODIFICAR =============
+            // Cambia a true cuando ya sepas la dinámica de votación
+            MOSTRAR_ZONA_ELIMINACION: false,  // true = mostrar, false = ocultar
+            // Cambia a false cuando ya se hayan dado las indicaciones
+            MOSTRAR_AVISO_NO_VOTAR: true,     // true = mostrar aviso, false = ocultar
+            // ============================================================
         };
 
         const TARGET_URL = `https://app.rankedvote.co/api/settings/rv/lamansiondia${CONFIG.DIA}`;
@@ -885,7 +960,7 @@
             'Edits De Mierda': 'M',
             'El Domi': 'M',
             'Male': 'F',
-            'SoyFrezo': 'M',
+            'Soy Frezo': 'M',
             'KingLuiz': 'M',
             'Pesque': 'M'
         };
@@ -898,7 +973,7 @@
             'Juanda': 'https://i.imgur.com/h6rIkXEs.png',
             'La Piquiña': 'https://i.imgur.com/RrVhcUZs.png',
             'KingLuiz': 'https://i.imgur.com/qQOy7Cms.png',
-            'SoyFrezo': 'https://i.imgur.com/JvQNhAUs.png',
+            'Soy Frezo': 'https://i.imgur.com/JvQNhAUs.png',
             'El Agropecuario': 'https://i.imgur.com/NncLW7Es.png',
             'El Domi': 'https://i.imgur.com/yon3rMZs.png',
             'Ness': 'https://i.imgur.com/3UZmzBls.png',
@@ -1013,7 +1088,35 @@
                 }
             });
 
-            document.getElementById('dangerSpotlight').classList.add('visible');
+            // Aplicar clase single-person para avatares más grandes cuando solo hay 1 persona
+            if (dangerMales.length === 1) {
+                malesList.classList.add('single-person');
+            } else {
+                malesList.classList.remove('single-person');
+            }
+            if (dangerFemales.length === 1) {
+                femalesList.classList.add('single-person');
+            } else {
+                femalesList.classList.remove('single-person');
+            }
+
+            // Controlar visibilidad de la zona de eliminación según CONFIG
+            const dangerSpotlight = document.getElementById('dangerSpotlight');
+            if (CONFIG.MOSTRAR_ZONA_ELIMINACION) {
+                dangerSpotlight.classList.add('visible');
+                dangerSpotlight.classList.remove('force-hidden');
+            } else {
+                dangerSpotlight.classList.remove('visible');
+                dangerSpotlight.classList.add('force-hidden');
+            }
+
+            // Controlar visibilidad del aviso de no votar según CONFIG
+            const warningBanner = document.getElementById('warningBanner');
+            if (CONFIG.MOSTRAR_AVISO_NO_VOTAR) {
+                warningBanner.classList.remove('force-hidden');
+            } else {
+                warningBanner.classList.add('force-hidden');
+            }
 
             window.currentDangerMales = dangerMales;
             window.currentDangerFemales = dangerFemales;
@@ -1036,7 +1139,8 @@
                 let topClass = '';
                 let rankClass = 'normal';
                 let progressClass = '';
-                let isDanger = dangerSet.has(cand.name);
+                // Solo marcar como peligro si la zona de eliminación está visible
+                let isDanger = CONFIG.MOSTRAR_ZONA_ELIMINACION && dangerSet.has(cand.name);
                 let dangerLabel = '';
 
                 if (isDanger) {
