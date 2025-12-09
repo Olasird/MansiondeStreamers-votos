@@ -32,7 +32,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             text-align: center;
             padding: 40px 20px;
@@ -80,7 +79,6 @@
             }
         }
 
-        /* Vote Button */
         .vote-btn {
             display: inline-flex;
             align-items: center;
@@ -102,7 +100,6 @@
             box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -166,7 +163,6 @@
             }
         }
 
-        /* Status Bar */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -213,7 +209,6 @@
             }
         }
 
-        /* Results */
         .results-container {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -239,7 +234,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
-        /* Podium Colors */
         .result-row.top1 {
             background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, transparent 100%);
         }
@@ -372,7 +366,6 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Loader */
         .loader {
             display: flex;
             justify-content: center;
@@ -398,7 +391,6 @@
             display: none;
         }
 
-        /* Social Links */
         .social-links {
             display: flex;
             justify-content: center;
@@ -448,7 +440,6 @@
             flex-shrink: 0;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px;
@@ -456,9 +447,7 @@
             font-size: 0.8rem;
         }
 
-        /* Elimination Banner - MODIFICADO */
         .elimination-banner {
-            /* Tus estilos originales de fondo y bordes */
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 16px;
@@ -466,19 +455,13 @@
             margin-bottom: 24px;
             position: relative;
             overflow: hidden;
-
-            /* NUEVO: Flexbox para poner las columnas lado a lado */
             display: flex;
             flex-direction: row;
             align-items: center;
-            /* Centrado vertical */
             gap: 24px;
-            /* Espacio entre el texto y la curiosidad */
             text-align: center;
-            /* Mantiene el texto centrado */
         }
 
-        /* Animación de brillo (Intacta) */
         .elimination-banner::before {
             content: '';
             position: absolute;
@@ -489,7 +472,6 @@
             background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
             animation: shimmer 3s infinite;
             pointer-events: none;
-            /* Para que no interfiera con clicks */
         }
 
         @keyframes shimmer {
@@ -502,11 +484,8 @@
             }
         }
 
-        /* --- COLUMNA IZQUIERDA (Texto Principal) --- */
         .banner-main {
             flex: 2;
-            /* Ocupa más espacio (aprox 66%) */
-            /* Aseguramos que el contenido se comporte bien */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -536,26 +515,20 @@
             color: #fbbf24;
         }
 
-        /* --- COLUMNA DERECHA (Curiosidades) --- */
         .banner-side {
             flex: 1;
-            /* Ocupa menos espacio (aprox 33%) */
-            /* La línea divisoria usando TUS colores originales */
             border-left: 1px solid rgba(239, 68, 68, 0.3);
             padding-left: 24px;
-
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
 
-        /* Estilos para el título de la curiosidad */
         .curio-title {
             font-size: 0.9rem;
             font-weight: 700;
             color: #fbbf24;
-            /* Usamos el amarillo de tus <strong> para combinar */
             text-transform: uppercase;
             margin-bottom: 8px;
             letter-spacing: 0.5px;
@@ -568,20 +541,14 @@
             line-height: 1.4;
         }
 
-        /* Estilo de la imagen */
         .curio-img {
             width: 100%;
             max-width: 140px;
-            /* Tamaño controlado */
             border-radius: 8px;
-            /* Bordes redondeados */
             border: 1px solid rgba(239, 68, 68, 0.3);
-            /* Borde sutil rojo */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
-        /* --- VERSIÓN MÓVIL --- */
-        /* Si la pantalla es pequeña (celular), ponemos uno debajo del otro */
         @media (max-width: 768px) {
             .elimination-banner {
                 flex-direction: column;
@@ -590,20 +557,17 @@
             .banner-main {
                 width: 100%;
                 padding-bottom: 20px;
-                /* Cambiamos la línea para que esté abajo en vez de al lado */
                 border-bottom: 1px solid rgba(239, 68, 68, 0.3);
             }
 
             .banner-side {
                 width: 100%;
                 border-left: none;
-                /* Quitamos línea lateral */
                 padding-left: 0;
                 padding-top: 20px;
             }
         }
 
-        /* Danger Zone - Lowest votes highlight */
         .result-row.danger-zone {
             background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 50%, transparent 100%);
             border: 1px solid rgba(239, 68, 68, 0.4);
@@ -653,7 +617,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Danger Spotlight Section */
         .danger-spotlight {
             display: none;
             margin-bottom: 24px;
@@ -683,23 +646,16 @@
             gap: 16px;
         }
 
-        @media (max-width: 500px) {
-            .danger-spotlight-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .danger-card {
+        .danger-box {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(185, 28, 28, 0.08) 100%);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 16px;
-            padding: 20px;
-            text-align: center;
+            padding: 16px 20px;
             position: relative;
             overflow: hidden;
         }
 
-        .danger-card::before {
+        .danger-box::before {
             content: '';
             position: absolute;
             top: 0;
@@ -709,44 +665,79 @@
             background: linear-gradient(90deg, #ef4444, #dc2626);
         }
 
-        .danger-card-label {
-            font-size: 0.7rem;
+        .danger-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 12px;
         }
 
-        .danger-card-avatar {
-            width: 70px;
-            height: 70px;
+        .danger-box-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .danger-person {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .danger-person-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid rgba(239, 68, 68, 0.5);
-            margin-bottom: 12px;
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            flex-shrink: 0;
         }
 
-        .danger-card-name {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .danger-person-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .danger-person-name {
+            font-size: 0.95rem;
+            font-weight: 600;
             color: #ffffff;
-            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .danger-card-votes {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .danger-person-votes {
+            font-size: 0.8rem;
             color: #ef4444;
+            font-weight: 600;
         }
 
-        .danger-card-votes span {
-            font-size: 0.85rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.4);
+        @media (max-width: 500px) {
+            .danger-spotlight-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .danger-box {
+                padding: 12px;
+            }
+
+            .danger-person-avatar {
+                width: 32px;
+                height: 32px;
+            }
+
+            .danger-person-name {
+                font-size: 0.85rem;
+            }
         }
 
-        /* Responsive */
         @media (max-width: 640px) {
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
@@ -807,7 +798,6 @@
             </div>
         </div>
 
-        <!-- Banner dinámico - se llena desde JavaScript -->
         <div class="elimination-banner" id="infoBanner">
             <div class="banner-main">
                 <div class="banner-title" id="bannerTitle">Cargando información...</div>
@@ -815,23 +805,18 @@
             </div>
         </div>
 
-        <!-- Danger Spotlight - Shows who might be eliminated -->
         <div id="dangerSpotlight" class="danger-spotlight">
             <div class="danger-spotlight-title">
                 ⚠️ En zona de eliminación ⚠️
             </div>
             <div class="danger-spotlight-grid">
-                <div class="danger-card" id="dangerMale">
-                    <div class="danger-card-label">Hombre con menos votos</div>
-                    <img src="" alt="" class="danger-card-avatar" id="dangerMaleAvatar">
-                    <div class="danger-card-name" id="dangerMaleName">-</div>
-                    <div class="danger-card-votes"><span id="dangerMaleVotes">0</span> <span>votos</span></div>
+                <div class="danger-box" id="dangerMalesBox">
+                    <div class="danger-box-header">👨 Hombres</div>
+                    <div class="danger-box-list" id="dangerMalesList"></div>
                 </div>
-                <div class="danger-card" id="dangerFemale">
-                    <div class="danger-card-label">Mujer con menos votos</div>
-                    <img src="" alt="" class="danger-card-avatar" id="dangerFemaleAvatar">
-                    <div class="danger-card-name" id="dangerFemaleName">-</div>
-                    <div class="danger-card-votes"><span id="dangerFemaleVotes">0</span> <span>votos</span></div>
+                <div class="danger-box" id="dangerFemalesBox">
+                    <div class="danger-box-header">👩 Mujeres</div>
+                    <div class="danger-box-list" id="dangerFemalesList"></div>
                 </div>
             </div>
         </div>
@@ -871,21 +856,18 @@
     </div>
 
     <script>
-        
         const CONFIG = {
-            DIA: 6,
-            TITULO_DIA: "Eliminaciones Día 6",
-
-            ELIMINADOS_HOMBRES: 1,          
-            ELIMINADOS_MUJERES: 1,          
-            SE_VAN_LOS_MAS_VOTADOS: false,  
+            DIA: 7,
+            TITULO_DIA: "Eliminaciones Día 7",
+            ELIMINADOS_HOMBRES: 1,
+            ELIMINADOS_MUJERES: 1,
+            SE_VAN_LOS_MAS_VOTADOS: false,
         };
-       
+
         const TARGET_URL = `https://app.rankedvote.co/api/settings/rv/lamansiondia${CONFIG.DIA}`;
         const VOTE_URL = `https://app.rankedvote.co/rv/lamansiondia${CONFIG.DIA}/vote`;
 
         const GENDER_MAP = {
-            // Mujeres
             'May Osorio': 'F',
             'Ness': 'F',
             'Alejandra Buitrago': 'F',
@@ -896,7 +878,6 @@
             'Karen Orozco': 'F',
             'Soley': 'F',
             'Emikukis': 'F',
-            // Hombres
             'Ismael Sanchez': 'M',
             'El Agropecuario': 'M',
             'Juanda': 'M',
@@ -934,18 +915,16 @@
         };
 
         function getGender(name) {
-            // Búsqueda case-insensitive
             const nameLower = name.toLowerCase();
             for (const [key, value] of Object.entries(GENDER_MAP)) {
                 if (key.toLowerCase() === nameLower) {
                     return value;
                 }
             }
-            return 'U'; // U = Unknown
+            return 'U';
         }
 
         function getAvatar(name) {
-            // Búsqueda case-insensitive
             const nameLower = name.toLowerCase();
             for (const [key, value] of Object.entries(AVATAR_MAP)) {
                 if (key.toLowerCase() === nameLower) {
@@ -955,14 +934,14 @@
             return '';
         }
 
-        function findLowestByGender(candidates, gender) {
+        function findLowestNByGender(candidates, gender, count) {
             const filtered = candidates.filter(c => getGender(c.name) === gender);
-            return filtered.length > 0 ? filtered[filtered.length - 1].name : null;
+            return filtered.slice(-count).map(c => c.name);
         }
 
-        function findHighestByGender(candidates, gender) {
+        function findHighestNByGender(candidates, gender, count) {
             const filtered = candidates.filter(c => getGender(c.name) === gender);
-            return filtered.length > 0 ? filtered[0].name : null;
+            return filtered.slice(0, count).map(c => c.name);
         }
 
         function renderResults(candidates, deduplication, isFromCache = false) {
@@ -971,7 +950,6 @@
             const loaderEl = document.getElementById('loader');
             const statusEl = document.getElementById('status');
 
-            // Actualizar banner de deduplicación
             const bannerTitle = document.getElementById('bannerTitle');
             const bannerText = document.getElementById('bannerText');
 
@@ -983,39 +961,62 @@
                 bannerText.innerHTML = 'La plataforma está mostrando <strong>votos repetidos</strong>. Es decir, una persona podría votar <strong>más de una vez</strong>.';
             }
 
-            // Ordenar candidatos por votos (mayor a menor)
             candidates.sort((a, b) => b.votes - a.votes);
 
-            // Encontrar candidatos en peligro según CONFIG
-            let dangerMale, dangerFemale;
+            let dangerMales = [];
+            let dangerFemales = [];
 
             if (CONFIG.SE_VAN_LOS_MAS_VOTADOS) {
-                dangerMale = findHighestByGender(candidates, 'M');
-                dangerFemale = findHighestByGender(candidates, 'F');
+                dangerMales = findHighestNByGender(candidates, 'M', CONFIG.ELIMINADOS_HOMBRES);
+                dangerFemales = findHighestNByGender(candidates, 'F', CONFIG.ELIMINADOS_MUJERES);
             } else {
-                dangerMale = findLowestByGender(candidates, 'M');
-                dangerFemale = findLowestByGender(candidates, 'F');
+                dangerMales = findLowestNByGender(candidates, 'M', CONFIG.ELIMINADOS_HOMBRES);
+                dangerFemales = findLowestNByGender(candidates, 'F', CONFIG.ELIMINADOS_MUJERES);
             }
 
-            // Actualizar danger spotlight
-            const maleData = candidates.find(c => c.name === dangerMale);
-            const femaleData = candidates.find(c => c.name === dangerFemale);
+            const dangerSet = new Set([...dangerMales, ...dangerFemales]);
 
-            if (maleData) {
-                document.getElementById('dangerMaleAvatar').src = getAvatar(maleData.name);
-                document.getElementById('dangerMaleAvatar').alt = maleData.name;
-                document.getElementById('dangerMaleName').textContent = maleData.name;
-                document.getElementById('dangerMaleVotes').textContent = maleData.votes.toLocaleString('es-CO');
-            }
+            const malesList = document.getElementById('dangerMalesList');
+            const femalesList = document.getElementById('dangerFemalesList');
+            malesList.innerHTML = '';
+            femalesList.innerHTML = '';
 
-            if (femaleData) {
-                document.getElementById('dangerFemaleAvatar').src = getAvatar(femaleData.name);
-                document.getElementById('dangerFemaleAvatar').alt = femaleData.name;
-                document.getElementById('dangerFemaleName').textContent = femaleData.name;
-                document.getElementById('dangerFemaleVotes').textContent = femaleData.votes.toLocaleString('es-CO');
-            }
+            dangerMales.forEach((name) => {
+                const data = candidates.find(c => c.name === name);
+                if (data) {
+                    const person = document.createElement('div');
+                    person.className = 'danger-person';
+                    person.innerHTML = `
+                        <img src="${getAvatar(data.name)}" alt="${data.name}" class="danger-person-avatar">
+                        <div class="danger-person-info">
+                            <div class="danger-person-name">${data.name}</div>
+                            <div class="danger-person-votes">${data.votes.toLocaleString('es-CO')} votos</div>
+                        </div>
+                    `;
+                    malesList.appendChild(person);
+                }
+            });
+
+            dangerFemales.forEach((name) => {
+                const data = candidates.find(c => c.name === name);
+                if (data) {
+                    const person = document.createElement('div');
+                    person.className = 'danger-person';
+                    person.innerHTML = `
+                        <img src="${getAvatar(data.name)}" alt="${data.name}" class="danger-person-avatar">
+                        <div class="danger-person-info">
+                            <div class="danger-person-name">${data.name}</div>
+                            <div class="danger-person-votes">${data.votes.toLocaleString('es-CO')} votos</div>
+                        </div>
+                    `;
+                    femalesList.appendChild(person);
+                }
+            });
 
             document.getElementById('dangerSpotlight').classList.add('visible');
+
+            window.currentDangerMales = dangerMales;
+            window.currentDangerFemales = dangerFemales;
 
             // Calcular totales
             const totalVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
@@ -1035,11 +1036,10 @@
                 let topClass = '';
                 let rankClass = 'normal';
                 let progressClass = '';
-                let isDanger = false;
+                let isDanger = dangerSet.has(cand.name);
                 let dangerLabel = '';
 
-                if (cand.name === dangerMale || cand.name === dangerFemale) {
-                    isDanger = true;
+                if (isDanger) {
                     dangerLabel = '<span class="danger-label">En Peligro</span>';
                 }
 
@@ -1073,7 +1073,6 @@
                 resultsEl.appendChild(row);
             });
 
-            // Actualizar estado
             loaderEl.classList.add('hidden');
             resultsEl.classList.remove('hidden');
 
@@ -1091,7 +1090,6 @@
             const resultsEl = document.getElementById('results');
             const statsEl = document.getElementById('stats');
 
-            // PASO 1: Mostrar datos cacheados INMEDIATAMENTE mientras carga
             const cachedData = localStorage.getItem('votosCache');
             if (cachedData) {
                 try {
@@ -1102,14 +1100,12 @@
                 } catch (e) { /* caché corrupto, ignorar */ }
             }
 
-            // Lista de proxies CORS (fallback si uno falla)
             const CORS_PROXIES = [
                 (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
                 (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
                 (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
             ];
 
-            // Función para fetch con timeout
             const fetchWithTimeout = async (url, timeout = 5000) => {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -1134,14 +1130,13 @@
                 let response = null;
                 let lastError = null;
 
-                // Intentar con cada proxy hasta que uno funcione (timeout 5s por proxy)
                 for (const proxyFn of CORS_PROXIES) {
                     try {
                         const proxyUrl = proxyFn(targetWithCache);
                         response = await fetchWithTimeout(proxyUrl, 5000);
 
                         if (response.ok) {
-                            break; // Éxito, salir del loop
+                            break;
                         }
                         lastError = new Error(`HTTP ${response.status}`);
                     } catch (e) {
@@ -1149,18 +1144,15 @@
                     }
                 }
 
-                // Verificar si algún proxy funcionó
                 if (!response || !response.ok) {
                     throw lastError || new Error('Todos los proxies fallaron');
                 }
 
                 const jsonReal = await response.json();
 
-                // Extraer configuración de la API
                 const settings = jsonReal.payload.settings;
                 const voterDeduplication = settings.voter_deduplication;
 
-                // Verificar si hay resultados disponibles
                 if (!settings.results || !settings.results.visual_data) {
                     throw new Error('Resultados no disponibles aún');
                 }
@@ -1175,10 +1167,8 @@
                     }
                 }
 
-                // PASO 2: Renderizar datos frescos
                 renderResults(candidates, voterDeduplication, false);
 
-                // Guardar en caché para carga instantánea la próxima vez
                 try {
                     localStorage.setItem('votosCache', JSON.stringify({
                         data: candidates,
@@ -1189,17 +1179,14 @@
 
             } catch (error) {
                 console.error('Error fetching data:', error.message);
-                // Solo mostrar error si no hay datos previos cargados
                 if (resultsEl.innerHTML === '') {
                     statusEl.textContent = "Error al cargar. Esperando próxima actualización...";
                 }
-                // Si es rate limiting, no hacer nada más - esperar al próximo ciclo
             }
         }
 
         let lastFetchMinute = -1;
 
-        // Timer cada 5 minutos (:00, :05, :10, :15, etc.)
         function getSecondsUntilNextUpdate() {
             const now = new Date();
             const minutes = now.getMinutes();
@@ -1227,10 +1214,9 @@
             const now = new Date();
             const currentMinute = now.getMinutes();
 
-            // Cada 5 minutos, esperar 10 segundos después del minuto exacto
             if (currentMinute % 5 === 0 && lastFetchMinute !== currentMinute) {
                 lastFetchMinute = currentMinute;
-                setTimeout(fetchData, 5000); // Esperar 5 segundos antes de pedir datos
+                setTimeout(fetchData, 5000);
             }
         }
 
@@ -1248,11 +1234,60 @@
             checkAndFetch();
         }
 
-        // Inicializar elementos dinámicos con CONFIG
         function initializeConfig() {
             document.getElementById('headerDayTitle').textContent = CONFIG.TITULO_DIA;
             document.getElementById('voteBtn').href = VOTE_URL;
         }
+
+        const PARTICIPANTES_FAVORITOS = ['El Agropecuario', 'Edits De Mierda', 'Juanda', 'Cami Pulgarin'];
+
+        const FRASES_RANDOM = [
+            'pss pss...vota por el Agro',
+            'Team Katteyes',
+            'Amor ya votaste?',
+            'Al Agro le mide 24 WTF',
+            '¡Hey! No te olvides...',
+            'Resultados actualizándose...',
+            'Hola, Dios te ama, recuerdalo',
+
+        ];
+
+        function getFraseDinamica() {
+            const allDanger = [...(window.currentDangerMales || []), ...(window.currentDangerFemales || [])];
+            const favoritosEnPeligro = allDanger.filter(name => PARTICIPANTES_FAVORITOS.includes(name));
+
+            if (favoritosEnPeligro.length > 0) {
+                const nombre = favoritosEnPeligro[Math.floor(Math.random() * favoritosEnPeligro.length)];
+                const frasesConNombre = [
+                    `¡${nombre} está en peligro!`,
+                    `¿Dejarás ir a ${nombre}?`,
+                    `${nombre} necesita tu voto...`,
+                    `Le bajaron el dedo a ${nombre}`,
+                ];
+                return frasesConNombre[Math.floor(Math.random() * frasesConNombre.length)];
+            }
+
+            return FRASES_RANDOM[Math.floor(Math.random() * FRASES_RANDOM.length)];
+        }
+
+        const TITULO_ORIGINAL = document.title;
+        let tituloInterval = null;
+
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                let toggle = false;
+                tituloInterval = setInterval(() => {
+                    document.title = toggle ? getFraseDinamica() : 'LMDLS Votos';
+                    toggle = !toggle;
+                }, 5000);
+            } else {
+                if (tituloInterval) {
+                    clearInterval(tituloInterval);
+                    tituloInterval = null;
+                }
+                document.title = TITULO_ORIGINAL;
+            }
+        });
 
         initializeConfig();
         fetchData();
